@@ -86,7 +86,7 @@ class SafeMath:
 		if (a<0 or b<0):
 			raise NegativeNumbers("Numbers cannot be negative")
 		c = a*b
-		if (c/a != b):
+		if (c//a != b):
 			raise MultiplicationOverFlowError
 		else:
 			return c
@@ -106,7 +106,7 @@ class SafeMath:
 			raise NegativeNumbers("Numbers cannot be negative")
 		if (b < 0):
 			raise DivisionByLessThanZeroError
-		c = a/b
+		c = a//b
 		return c
 
 	def mod(a: int, b: int) -> int:
