@@ -1,6 +1,7 @@
 from iconservice import *
 import .IIRC2
 
+
 TAG = 'IRC_2'
 
 class InsufficientBalanceError(Exception):
@@ -8,6 +9,19 @@ class InsufficientBalanceError(Exception):
 
 class ZeroValueError(Exception):
     pass
+
+class InsufficientBalanceError(Exception):
+    pass
+
+
+# An interface of tokenFallback.
+# Receiving SCORE that has implemented this interface can handle
+# the receiving or further routine.
+class TokenFallbackInterface(InterfaceScore):
+    @interface
+    def tokenFallback(self, _from: Address, _value: int, _data: bytes):
+        pass
+
 
 class IRC2(IIRC2, IconScoreBase):
     _NAME = 'name'
@@ -36,11 +50,13 @@ class IRC2(IIRC2, IconScoreBase):
         if (len(_tokenName) <= 0):
             revert("Invalid token name")
         if _initialSupply <= 0:
-            revert("Initial Supply can't be less than zero")
+            raise ZeroValueError("Initial Supply cannot be less than zero")
+            pass
         if _decimals < 0:
-            revert("Decimals cannot be less than zero")
+            raise ZeroValueError("Decimals cannot be less than zero")
+            pass
 
-        # Logger.debug(f'on_install: total_supply={total_supply}', TAG)
+        Logger.debug(f'on_install: total_supply={total_supply}', TAG)
 
         total_supply = _initialSupply * 10 ** _decimals
         self._name.set(_tokenName)
@@ -89,35 +105,34 @@ class IRC2(IIRC2, IconScoreBase):
         if _value <= 0 :
             raise ZeroValueError("Transferring value cannot be less than 0.")
             return
-            # revert("Transferring value cannot be less than 0.")
         if self._balances[_from] < _value :
             raise InsufficientBalanceError("Insufficient balance.")
             return
-            # revert("Insufficient balance.")
 
         self._beforeTokenTransfer(_from, _to, _value)
 
         self._balances[_from] -=_value
         self._balances[_to] += _value
 
-        # another class not implemented yet-
-        # if _to.is_contract:
-        #     # If the recipient is SCORE,
-        #     #   then calls `tokenFallback` to hand over control.
-        #     recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
-        #     recipient_score.tokenFallback(_from, _value, _data)
+        if _to.is_contract:
+            # If the recipient is SCORE,
+            #   then calls `tokenFallback` to hand over control.
+            recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
+            recipient_score.tokenFallback(_from, _value, _data)
 
         # Emits an event log `Transfer`
         self.Transfer(_from, _to, _value, _data)
-        # Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
+        Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
     @external
     def _mint(self, account:Address, value:int) -> bool:
-        if account == 'invalid':
-            revert("Invalid")
+        if !account.is_contract:
+            raise InvalidAccountError("Invalid account address")
+            pass
 
         if value <= 0:
-            revert("Invalid value")
+            raise LessThanOrZero("Invalid Value")
+            pass
 
         self._beforeTokenTransfer(0, account, value )
 
@@ -125,12 +140,14 @@ class IRC2(IIRC2, IconScoreBase):
         self._balances[account] += value
 
     @external
-    def _burn(self, account:Address, value:int) -> bool:
-        if account == 'invalid':
-            revert("Invalid")
+    def _burn(self, account: Address, value: int) -> bool:
+        if !account.is_contract:
+            raise InvalidAccountError("Invalid account address")
+            pass
 
         if value <= 0:
-            revert("Invalid value")
+            raise LessThanOrZero("Invalid Value")
+            pass
 
         self._beforeTokenTransfer(account, 0, value)
 
@@ -138,33 +155,35 @@ class IRC2(IIRC2, IconScoreBase):
         self._balances[account] -= value
 
     @external
-    def _beforeTokenTransfer(self, _from:Address, _to:Address,_value:int) -> None:
+    def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
         pass
 
     @external
-    def _allowance(self, owner:Address, spender:Address) -> int:
+    def _allowance(self, owner: Address, spender: Address) -> int:
+        if !owner.is_contract or !spender.is_contract:
+            raise InvalidAccountError("Invalid account address")
+            pass
+
         return self._allowances[owner][spender]
 
     @external
-    def approve(self, spender:Address, amount:int) -> bool:
+    def approve(self, spender: Address, amount: int) -> bool:
+        if !owner.is_contract or !spender.is_contract:
+            raise InvalidAccountError("Invalid account address")
+            pass
+
         self._approve(self.msg.sender, spender, amount)
         return true
 
     def _approve(self, owner:Address, spender:Address, value:int) -> None:
-        if owner == 'invalid'
-            revert("owner account invalid")
-
-        if spender == 'invalid':
-            revert('buyer account invalid')
-
         self._allowances[owner][spender] = value
 
     @external
-    def increaseAllowance(self, spender:Address, value:int) -> bool:
+    def increaseAllowance(self, spender: Address, value: int) -> bool:
         self._approve(self.msg.sender, spender,  self._allowances[msg.sender][spender] + value)
         return True
 
     @external
-    def decreaseAllowance(self, spender:Address, value:int) -> bool:
+    def decreaseAllowance(self, spender: Address, value: int) -> bool:
         self._approve(self.msg.sender, spender, self._allowances[msg.sender][spender] - value)
         return True
