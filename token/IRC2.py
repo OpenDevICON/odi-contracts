@@ -1,5 +1,6 @@
 from iconservice import *
 import .IIRC2
+from  ..math.SafeMath.SafeMath import add, sub, mul
 
 
 TAG = 'IRC_2'
@@ -62,7 +63,7 @@ class IRC2(IIRC2, IconScoreBase):
 
         Logger.debug(f'on_install: total_supply={total_supply}', TAG)
 
-        total_supply = _initialSupply * 10 ** _decimals
+        total_supply = mul(_initialSupply, 10 ** _decimals)
         self._name.set(_tokenName)
         self._decimals.set(_decimals)
         self._symbol.set(_symbolName)
@@ -115,8 +116,8 @@ class IRC2(IIRC2, IconScoreBase):
 
         self._beforeTokenTransfer(_from, _to, _value)
 
-        self._balances[_from] -=_value
-        self._balances[_to] += _value
+        sub(self._balances[_from], _value)
+        add(self._balances[_to], _value)
 
         if _to.is_contract:
             # If the recipient is SCORE,
@@ -140,8 +141,8 @@ class IRC2(IIRC2, IconScoreBase):
 
         self._beforeTokenTransfer(0, account, value )
 
-        self._total_supply += value
-        self._balances[account] += value
+        add(self._total_supply, value)
+        add(self._balances[account], value)
 
     @external
     def _burn(self, account: Address, value: int) -> bool:
@@ -155,8 +156,8 @@ class IRC2(IIRC2, IconScoreBase):
 
         self._beforeTokenTransfer(account, 0, value)
 
-        self._total_supply -= value
-        self._balances[account] -= value
+        sub(self._total_supply, value)
+        sub(self._balances[account], value)
 
     @external
     def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
