@@ -13,6 +13,8 @@ class ZeroValueError(Exception):
 class InsufficientBalanceError(Exception):
     pass
 
+class InvalidNameError(Exception):
+	pass
 
 # An interface of tokenFallback.
 # Receiving SCORE that has implemented this interface can handle
@@ -46,9 +48,11 @@ class IRC2(IIRC2, IconScoreBase):
         super().on_install()
 
         if (len(_symbolName) <= 0):
-            revert("invalid symbol name")
+        	raise InvalidNameError("Invalid Symbol name")
+        	pass
         if (len(_tokenName) <= 0):
-            revert("Invalid token name")
+            raise InvalidNameError("Invalid Token Name")
+            pass
         if _initialSupply <= 0:
             raise ZeroValueError("Initial Supply cannot be less than zero")
             pass
