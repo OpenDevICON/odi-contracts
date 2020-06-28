@@ -1,7 +1,7 @@
 from iconservice import *
 
 # An interface of ICON Token Standard, IRC-2
-class IRC2Interface(InterfaceScore):
+class IRC2Interface(ABC): #ABC - Abstract Base Classes
     @abstractmethod
     def name(self) -> str:
         pass
