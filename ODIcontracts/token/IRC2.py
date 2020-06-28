@@ -28,7 +28,7 @@ class TokenFallbackInterface(InterfaceScore):
 class IRC2(IRC2Interface, IconScoreBase):
     _NAME = 'name'
     _SYMBOL = 'symbol'
-    _DECIMAL = 'decimal'
+    _DECIMALS = 'decimals'
     _TOTAL_SUPPLY = 'total_supply'
     _BALANCES = 'balances'
     _ALLOWANCES = 'allowances'
@@ -44,7 +44,7 @@ class IRC2(IRC2Interface, IconScoreBase):
         self._allowances = DictDB(self._ALLOWANCES,db,value_type=int,depth=2)
 
 
-    def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, decimals:int = 18) -> None:
+    def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
         super().on_install()
 
         if (len(_symbolName) <= 0):
