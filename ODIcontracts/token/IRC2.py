@@ -1,7 +1,6 @@
 from iconservice import *
-import .IIRC2
-from  ..math.SafeMath.SafeMath import add, sub, mul
-
+from .IIRC2 import IRC2Interface
+from  ..math.SafeMath import SafeMath
 
 TAG = 'IRC_2'
 
@@ -26,7 +25,7 @@ class TokenFallbackInterface(InterfaceScore):
         pass
 
 
-class IRC2(IIRC2, IconScoreBase):
+class IRC2(IRC2Interface, IconScoreBase):
     _NAME = 'name'
     _SYMBOL = 'symbol'
     _DECIMAL = 'decimal'
@@ -63,7 +62,7 @@ class IRC2(IIRC2, IconScoreBase):
 
         Logger.debug(f'on_install: total_supply={total_supply}', TAG)
 
-        total_supply = mul(_initialSupply, 10 ** _decimals)
+        total_supply = SafeMath.mul(_initialSupply, 10 ** _decimals)
         self._name.set(_tokenName)
         self._decimals.set(_decimals)
         self._symbol.set(_symbolName)
@@ -74,7 +73,7 @@ class IRC2(IIRC2, IconScoreBase):
     
     @external(readonly=True)
     def hello(self)-> str:
-        Logger.debug(f'Hello, world!', TAG)
+        Logger.debug(f'Hello, worldnot ', TAG)
         return "Hello"
 
     @external(readonly=True)
@@ -116,10 +115,10 @@ class IRC2(IIRC2, IconScoreBase):
 
         self._beforeTokenTransfer(_from, _to, _value)
 
-        sub(self._balances[_from], _value)
-        add(self._balances[_to], _value)
+        SafeMath.sub(self._balances[_from], _value)
+        SafeMath.add(self._balances[_to], _value)
 
-        if _to.is_contract:
+        if _to.is_contract():
             # If the recipient is SCORE,
             #   then calls `tokenFallback` to hand over control.
             recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
@@ -131,7 +130,7 @@ class IRC2(IIRC2, IconScoreBase):
 
     @external
     def _mint(self, account:Address, value:int) -> bool:
-        if !account.is_contract:
+        if not account.is_contract():
             raise InvalidAccountError("Invalid account address")
             pass
 
@@ -141,12 +140,12 @@ class IRC2(IIRC2, IconScoreBase):
 
         self._beforeTokenTransfer(0, account, value )
 
-        add(self._total_supply, value)
-        add(self._balances[account], value)
+        SafeMath.add(self._total_supply, value)
+        SafeMath.add(self._balances[account], value)
 
     @external
     def _burn(self, account: Address, value: int) -> bool:
-        if !account.is_contract:
+        if not account.is_contract():
             raise InvalidAccountError("Invalid account address")
             pass
 
@@ -156,8 +155,8 @@ class IRC2(IIRC2, IconScoreBase):
 
         self._beforeTokenTransfer(account, 0, value)
 
-        sub(self._total_supply, value)
-        sub(self._balances[account], value)
+        SafeMath.sub(self._total_supply, value)
+        SafeMath.sub(self._balances[account], value)
 
     @external
     def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
@@ -165,7 +164,7 @@ class IRC2(IIRC2, IconScoreBase):
 
     @external
     def _allowance(self, owner: Address, spender: Address) -> int:
-        if !owner.is_contract or !spender.is_contract:
+        if not owner.is_contract or not spender.is_contract:
             raise InvalidAccountError("Invalid account address")
             pass
 
@@ -173,7 +172,7 @@ class IRC2(IIRC2, IconScoreBase):
 
     @external
     def approve(self, spender: Address, amount: int) -> bool:
-        if !owner.is_contract or !spender.is_contract:
+        if not owner.is_contract or not spender.is_contract:
             raise InvalidAccountError("Invalid account address")
             pass
 

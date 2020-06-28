@@ -1,0 +1,5 @@
+.vscode
+.testscore
+.teststatedb
+.ODIcontracts/__pycache__
+.ODIcontracts/token/__pycache__
