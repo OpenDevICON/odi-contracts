@@ -1,5 +1,6 @@
 import .IRC2
 from iconservice import *
+from  ..math.SafeMath.SafeMath import sub
 
 class IRC2Burnable(IRC2,IconScoreBase):
 
@@ -10,7 +11,7 @@ class IRC2Burnable(IRC2,IconScoreBase):
 
     @external
     def burnFrom(self, _account: Address, _amount: int) -> None:
-        self._decreasedAllowance = allowance(_account, msg.sender - _amount )
+        self._decreasedAllowance = allowance(_account, sub(msg.sender, _amount))
 
         #these are from IRC2
         _approve(_account, msg.sender, self._decreasedAllowance)
