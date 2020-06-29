@@ -7,7 +7,7 @@ class AlreadyPausedException(Exception):
 class AlreadyUnpausedException(Exception):
 	pass
 
-class Pausable(IconScoreBae):
+class Pausable(IconScoreBase):
 	_PAUSED = 'paused'
 
 	@eventlog(indexed=1)
