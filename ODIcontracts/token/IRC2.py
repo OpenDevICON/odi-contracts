@@ -184,10 +184,10 @@ class IRC2(IRC2Interface, IconScoreBase):
 
     @external
     def increaseAllowance(self, spender: Address, value: int) -> bool:
-        self._approve(self.msg.sender, spender,  self._allowances[msg.sender][spender] + value)
+        self._approve(self.msg.sender, spender,  SafeMath.add(self._allowances[msg.sender][spender], value))
         return True
 
     @external
     def decreaseAllowance(self, spender: Address, value: int) -> bool:
-        self._approve(self.msg.sender, spender, self._allowances[msg.sender][spender] - value)
+        self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[msg.sender][spender],value))
         return True
