@@ -1,5 +1,6 @@
 .vscode
 .testscore
 .teststatedb
-.ODIcontracts/__pycache__
-.ODIcontracts/token/__pycache__
+ODIcontracts/__pycache__
+ODIcontracts/token/__pycache__
+ODIcontracts/token/__pycache__/IIRC2.cpython-38.pyc
