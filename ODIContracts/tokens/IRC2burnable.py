@@ -13,9 +13,9 @@ class IRC2Burnable(IRC2):
 		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals)
 
 	@external
-	def burn(self, _amount: int) -> None:
+	def burn(self, _amount: int):
 		# _burn is from IRC2
-		super()._burn(self.msg.sender, _amount)
+		super()._burn(self.address, _amount)
 
 	# @external
 	# def burnFrom(self, _account: Address, _amount: int) -> None:

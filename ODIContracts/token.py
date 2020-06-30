@@ -13,7 +13,7 @@ class TokenFallbackInterface(InterfaceScore):
 		pass
 
 
-class SampleToken(IRC2Burnable):
+class SampleToken(IRC2):
 
 	@eventlog(indexed=3)
 	def Transfer(self, _from: Address, _to: Address, _value: int, _data: bytes):
@@ -44,9 +44,17 @@ class SampleToken(IRC2Burnable):
 	def totalSupply(self) -> int:
 		return super().totalSupply()
 
+	@external(readonly=True)
+	def balanceOf(self, account:Address) -> int:
+		return super().totalSupply()
+
+	# @external
+	# def burn(self, _amount:int) -> None:
+	# 	return super().burn(_amount)
+
 	@external
-	def burn(self, _amount:int) -> None:
-		return super().burn(_amount)
+	def transfer(self, _to:Address, _value:int):
+		super().transfer(_to, _value)
 
 	@external
 	def stringout(self, _string:str):

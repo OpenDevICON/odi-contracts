@@ -16,6 +16,9 @@ class InsufficientBalanceError(Exception):
 class InvalidNameError(Exception):
 	pass
 
+class InvalidAccountError(Exception):
+	pass
+
 # An interface of tokenFallback.
 # Receiving SCORE that has implemented this interface can handle
 # the receiving or further routine.
@@ -121,11 +124,33 @@ class IRC2(TokenStandard, IconScoreBase):
 		pass
 
 	@external
-	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> bool:
+	def transfer(self, _to: Address, _value: int, _data: bytes = None):
+		if _data is None:
+			_data = b'None'
 		self._transfer(self.msg.sender, _to, _value, _data)
-		return true
 
-	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes) -> None:
+	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes):
+
+		# Checks the sending value and balance.
+		if _value < 0:
+			revert("Transferring value cannot be less than zero")
+		if self._balances[_from] < _value:
+			revert("Out of balance")
+
+		self._balances[_from] = self._balances[_from] - _value
+		self._balances[_to] = self._balances[_to] + _value
+
+		if _to.is_contract:
+			# If the recipient is SCORE,
+			#   then calls `tokenFallback` to hand over control.
+			recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
+			recipient_score.tokenFallback(_from, _value, _data)
+
+		# Emits an event log `Transfer`
+		self.Transfer(_from, _to, _value, _data)
+		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
+
+	def _Nottransfer(self, _from: Address, _to: Address, _value: int, _data: bytes) -> None:
 		if _value <= 0 :
 			raise ZeroValueError("Transferring value cannot be less than 0.")
 			return
@@ -135,10 +160,10 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(_from, _to, _value)
 
-		SafeMath.sub(self._balances[_from], _value)
-		SafeMath.add(self._balances[_to], _value)
+		self._balances[_from] = SafeMath.sub(self._balances[_from], _value)
+		self._balances[_to] = SafeMath.add(self._balances[_to], _value)
 
-		if _to.is_contract():
+		if _to.is_contract:
 			# If the recipient is SCORE,
 			#   then calls `tokenFallback` to hand over control.
 			recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
@@ -150,7 +175,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def _mint(self, account:Address, value:int) -> bool:
-		if not account.is_contract():
+		if not account.is_contract:
 			raise InvalidAccountError("Invalid account address")
 			pass
 
@@ -160,23 +185,23 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(0, account, value )
 
-		SafeMath.add(self._total_supply, value)
-		SafeMath.add(self._balances[account], value)
+		self._total_supply = SafeMath.add(self._total_supply, value)
+		self._balances[account] = SafeMath.add(self._balances[account], value)
 
 	@external
 	def _burn(self, account: Address, value: int) -> None:
-		if not account.is_contract():
+		if not account.is_contract:
 			raise InvalidAccountError("Invalid account address")
 			pass
 
-		if value <= 0:
-			raise LessThanOrZero("Invalid Value")
-			pass
+		# if value <= 0:
+		# 	raise LessThanOrZero("Invalid Value")
+		# 	pass
 
 		self._beforeTokenTransfer(account, 0, value)
 
-		SafeMath.sub(self._total_supply, value)
-		SafeMath.sub(self._balances[account], value)
+		self._total_supply = SafeMath.sub(self._total_supply, value)
+		self._balances[account] = SafeMath.sub(self._balances[account], value)
 
 	@external
 	def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
