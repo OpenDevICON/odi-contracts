@@ -20,8 +20,8 @@ class IRC2Mintable(IRC2):
 
 	@external
 	def mintTo(self, _account: Address, _amount: int) -> None:
-		 self._increasedAllowance = allowance(_account, SafeMath.add(msg.sender, _amount))
+		self._increasedAllowance = allowance(_account, SafeMath.add(msg.sender, _amount))
 
 		 #these are from IRC2
-		 super()._approve(_account, msg.sender, self._increasedAllowance)
-		 super()._mint(_account, _amount)
+		super()._approve(_account, msg.sender, self._increasedAllowance)
+		super()._mint(_account, _amount)

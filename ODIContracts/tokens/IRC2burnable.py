@@ -20,8 +20,8 @@ class IRC2Burnable(IRC2):
 
 	@external
 	def burnFrom(self, _account: Address, _amount: int) -> None:
-		 self._decreasedAllowance = allowance(_account, SafeMath.sub(msg.sender, _amount))
+		self._decreasedAllowance = allowance(_account, SafeMath.sub(msg.sender, _amount))
 
 		 #these are from IRC2
-		 super()._approve(_account, msg.sender, self._decreasedAllowance)
-		 super()._burn(_account, _amount)
+		super()._approve(_account, msg.sender, self._decreasedAllowance)
+		super()._burn(_account, _amount)
