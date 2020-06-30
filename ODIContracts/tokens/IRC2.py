@@ -116,14 +116,13 @@ class IRC2(TokenStandard, IconScoreBase):
 	def balanceOf(self,account: Address) -> int:
 		return self._balances[account]
 
-	@eventlog(indexed=3)
+	@eventlog(indexed=3)-
 	def Transfer(self, _from: Address, _to:  Address, _value:  int, _data:  bytes): 
 		pass
 
 	@eventlog(indexed=1)
 	def Balance(self, _balance:int, note:str): 
 		pass
-
 
 	@external
 	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> bool:
@@ -155,11 +154,13 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
+	# should be in IRC2Mintable.py later 
 	@external
 	def mint(self, value:int) -> bool:
 		self._mint(self.msg.sender, value)
 		return True
 
+	# should be in Mintable.py later
 	@external
 	def mintTo(self, _account:Address, _value:int) -> bool:
 		self._mint(_account, _value)
@@ -176,11 +177,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(0, account, value )
 
-		self.Balance(self._balances[account], "BEFORE")
 		self._total_supply.set(SafeMath.add(self._total_supply.get(), value))
 		self._balances[account] = SafeMath.add(self._balances[account], value)		
-
-		self.Balance(self._balances[account], "AFTER")
 
 	@external
 	def _burn(self, account: Address, value: int) -> None:
@@ -194,8 +192,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(account, 0, value)
 
-		SafeMath.sub(self._total_supply.get(), value)
-		SafeMath.sub(self._balances[account], value)
+		self._total_supply.set(SafeMath.sub(self._total_supply.get(), value))
+		self._balances[account] = SafeMath.sub(self._balances[account], value)
 
 	@external
 	def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
