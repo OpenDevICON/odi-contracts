@@ -2,7 +2,7 @@ from iconservice import *
 from .IRC2 import IRC2
 from ..math.SafeMath import SafeMath
 
-class IRC2Burnable(IRC2):
+class IRC2Mintable(IRC2):
 
 	def __init__(self, db: IconScoreDatabase) -> None:
 		super().__init__(db)
@@ -14,14 +14,14 @@ class IRC2Burnable(IRC2):
 		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals)
 
 	@external
-	def burn(self, _amount: int) -> None:
+	def mint(self, _amount: int) -> None:
 		# _burn is from IRC2
-		super()._burn(self.msg.sender, _amount)
+		super()._mint(self.msg.sender, _amount)
 
 	@external
-	def burnFrom(self, _account: Address, _amount: int) -> None:
-		 self._decreasedAllowance = allowance(_account, SafeMath.sub(msg.sender, _amount))
+	def mintTo(self, _account: Address, _amount: int) -> None:
+		 self._increasedAllowance = allowance(_account, SafeMath.add(msg.sender, _amount))
 
 		 #these are from IRC2
-		 super()._approve(_account, msg.sender, self._decreasedAllowance)
-		 super()._burn(_account, _amount)
+		 super()._approve(_account, msg.sender, self._increasedAllowance)
+		 super()._mint(_account, _amount)

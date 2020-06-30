@@ -1,5 +1,6 @@
 from iconservice import *
-from .tokens.IRC2burnable import *
+from .tokens.IRC2burnable import IRC2Burnable
+from .tokens.IRC2mintable import IRC2Mintable
 from .tokens.IRC2 import IRC2
 
 TAG = 'SampleToken'
@@ -53,5 +54,9 @@ class SampleToken(IRC2):
 		return super().transfer(_to, _value)
 
 	@external
-	def burn(self, _amount:int) -> None:
-		return super().burn(_amount)
+	def burn(self, _account:Address, _amount:int) -> None:
+		return super()._burn(_account, _amount)
+
+	@external
+	def mint(self, _value:int):
+		return super().mint(_value)

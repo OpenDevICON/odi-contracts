@@ -120,6 +120,11 @@ class IRC2(TokenStandard, IconScoreBase):
 	def Transfer(self, _from: Address, _to:  Address, _value:  int, _data:  bytes): 
 		pass
 
+	@eventlog(indexed=1)
+	def Balance(self, _balance:int, note:str): 
+		pass
+
+
 	@external
 	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> bool:
 		if _data is None:
@@ -151,10 +156,19 @@ class IRC2(TokenStandard, IconScoreBase):
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
 	@external
+	def mint(self, value:int) -> bool:
+		self._mint(self.msg.sender, value)
+		return True
+
+	@external
+	def mintTo(self, _account:Address, _value:int) -> bool:
+		self._mint(_account, _value)
+		return True
+
 	def _mint(self, account:Address, value:int) -> bool:
-		if not account.is_contract:
-			raise InvalidAccountError("Invalid account address")
-			pass
+		# if not account.is_contract:
+		# 	raise InvalidAccountError("Invalid account address")
+		# 	pass
 
 		if value <= 0:
 			raise LessThanOrZero("Invalid Value")
@@ -162,14 +176,17 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(0, account, value )
 
-		SafeMath.add(self._total_supply, value)
-		SafeMath.add(self._balances[account], value)
+		self.Balance(self._balances[account], "BEFORE")
+		self._total_supply.set(SafeMath.add(self._total_supply.get(), value))
+		self._balances[account] = SafeMath.add(self._balances[account], value)		
+
+		self.Balance(self._balances[account], "AFTER")
 
 	@external
 	def _burn(self, account: Address, value: int) -> None:
-		if not account.is_contract:
-			raise InvalidAccountError("Invalid account address")
-			pass
+		# if not account.is_contract:
+		# 	raise InvalidAccountError("Invalid account address")
+		# 	pass
 
 		if value <= 0:
 			raise LessThanOrZero("Invalid Value")
@@ -177,7 +194,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(account, 0, value)
 
-		SafeMath.sub(self._total_supply, value)
+		SafeMath.sub(self._total_supply.get(), value)
 		SafeMath.sub(self._balances[account], value)
 
 	@external
