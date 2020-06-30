@@ -70,31 +70,31 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._decimals.set(_decimals)
 		self._balances[self.msg.sender] = total_supply
 
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
+	def on_update(self) -> None:
 		super().on_install()
 
-		if (len(_symbolName) <= 0):
-			raise InvalidNameError("Invalid Symbol name")
-			pass
-		if (len(_tokenName) <= 0):
-			raise InvalidNameError("Invalid Token Name")
-			pass
-		if _initialSupply <= 0:
-			raise ZeroValueError("Initial Supply cannot be less than zero")
-			pass
-		if _decimals < 0:
-			raise ZeroValueError("Decimals cannot be less than zero")
-			pass
+		# if (len(_symbolName) <= 0):
+		# 	raise InvalidNameError("Invalid Symbol name")
+		# 	pass
+		# if (len(_tokenName) <= 0):
+		# 	raise InvalidNameError("Invalid Token Name")
+		# 	pass
+		# if _initialSupply <= 0:
+		# 	raise ZeroValueError("Initial Supply cannot be less than zero")
+		# 	pass
+		# if _decimals < 0:
+		# 	raise ZeroValueError("Decimals cannot be less than zero")
+		# 	pass
 
-		total_supply = SafeMath.mul(_initialSupply, 10 ** _decimals)
+		# total_supply = SafeMath.mul(_initialSupply, 10 ** _decimals)
 
-		Logger.debug(f'on_install: total_supply={total_supply}', TAG)
+		# Logger.debug(f'on_install: total_supply={total_supply}', TAG)
 
-		self._name.set(_tokenName)
-		self._decimals.set(_decimals)
-		self._symbol.set(_symbolName)
-		self._total_supply.set(total_supply)
-		self._balances[self.msg.sender] = total_supply
+		# self._name.set(_tokenName)
+		# self._decimals.set(_decimals)
+		# self._symbol.set(_symbolName)
+		# self._total_supply.set(total_supply)
+		# self._balances[self.msg.sender] = total_supply
 
 	@external(readonly=True)
 	def name(self) -> str:
@@ -116,7 +116,7 @@ class IRC2(TokenStandard, IconScoreBase):
 	def balanceOf(self,account: Address) -> int:
 		return self._balances[account]
 
-	@eventlog(indexed=3):
+	@eventlog(indexed=3)
 	def Transfer(self, _from: Address, _to:  Address, _value:  int, _data:  bytes): 
 		pass
 
