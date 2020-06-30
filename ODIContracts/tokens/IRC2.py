@@ -122,8 +122,10 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> bool:
+		if _data is None:
+			_data = b'None'
 		self._transfer(self.msg.sender, _to, _value, _data)
-		return true
+		return True
 
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes) -> None:
 		if _value <= 0 :
@@ -135,10 +137,10 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(_from, _to, _value)
 
-		SafeMath.sub(self._balances[_from], _value)
-		SafeMath.add(self._balances[_to], _value)
+		self._balances[_from] = SafeMath.sub(self._balances[_from], _value)
+		self._balances[_to] = SafeMath.add(self._balances[_to], _value)
 
-		if _to.is_contract():
+		if _to.is_contract:
 			# If the recipient is SCORE,
 			#   then calls `tokenFallback` to hand over control.
 			recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
@@ -150,7 +152,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def _mint(self, account:Address, value:int) -> bool:
-		if not account.is_contract():
+		if not account.is_contract:
 			raise InvalidAccountError("Invalid account address")
 			pass
 
@@ -165,7 +167,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def _burn(self, account: Address, value: int) -> None:
-		if not account.is_contract():
+		if not account.is_contract:
 			raise InvalidAccountError("Invalid account address")
 			pass
 
