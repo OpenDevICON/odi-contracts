@@ -116,7 +116,7 @@ class IRC2(TokenStandard, IconScoreBase):
 	def balanceOf(self,account: Address) -> int:
 		return self._balances[account]
 
-	@eventlog(indexed=3)-
+	@eventlog(indexed=3):
 	def Transfer(self, _from: Address, _to:  Address, _value:  int, _data:  bytes): 
 		pass
 
