@@ -22,12 +22,12 @@ class IRC2Pausable(IRC2):
 		super().__init__(db)
 		self._paused = VarDB(self._PAUSED, db, value_type=bool)
 
-	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
-		self._paused.set(False)
+	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _paused:bool = False) -> None:
+		self._paused.set(_paused)
 		super().on_install(_tokenName, _symbolName, _initialSupply, _decimals)
 
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
-		self._paused.set(False)
+	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _paused:bool = False) -> None:
+		self._paused.set(_paused)
 		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals)
 
 	@external(readonly=True)
