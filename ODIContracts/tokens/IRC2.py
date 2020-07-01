@@ -1,6 +1,7 @@
 from iconservice import *
 from .IIRC2 import TokenStandard
-from  ..math.SafeMath import SafeMath
+from ..math.SafeMath import SafeMath
+from ..utils.address import is_icon_address_valid
 
 TAG = 'IRC_2'
 
@@ -70,31 +71,31 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._decimals.set(_decimals)
 		self._balances[self.msg.sender] = total_supply
 
-	def on_update(self) -> None:
+	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
 		super().on_install()
 
-		# if (len(_symbolName) <= 0):
-		# 	raise InvalidNameError("Invalid Symbol name")
-		# 	pass
-		# if (len(_tokenName) <= 0):
-		# 	raise InvalidNameError("Invalid Token Name")
-		# 	pass
-		# if _initialSupply <= 0:
-		# 	raise ZeroValueError("Initial Supply cannot be less than zero")
-		# 	pass
-		# if _decimals < 0:
-		# 	raise ZeroValueError("Decimals cannot be less than zero")
-		# 	pass
+		if (len(_symbolName) <= 0):
+			raise InvalidNameError("Invalid Symbol name")
+			pass
+		if (len(_tokenName) <= 0):
+			raise InvalidNameError("Invalid Token Name")
+			pass
+		if _initialSupply <= 0:
+			raise ZeroValueError("Initial Supply cannot be less than zero")
+			pass
+		if _decimals < 0:
+			raise ZeroValueError("Decimals cannot be less than zero")
+			pass
 
-		# total_supply = SafeMath.mul(_initialSupply, 10 ** _decimals)
+		total_supply = SafeMath.mul(_initialSupply, 10 ** _decimals)
 
-		# Logger.debug(f'on_install: total_supply={total_supply}', TAG)
+		Logger.debug(f'on_install: total_supply={total_supply}', TAG)
 
-		# self._name.set(_tokenName)
-		# self._decimals.set(_decimals)
-		# self._symbol.set(_symbolName)
-		# self._total_supply.set(total_supply)
-		# self._balances[self.msg.sender] = total_supply
+		self._name.set(_tokenName)
+		self._decimals.set(_decimals)
+		self._symbol.set(_symbolName)
+		self._total_supply.set(total_supply)
+		self._balances[self.msg.sender] = total_supply
 
 	@external(readonly=True)
 	def name(self) -> str:
@@ -122,6 +123,10 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@eventlog(indexed=1)
 	def Balance(self, _balance:int, note:str): 
+		pass
+
+	@eventlog(indexed=1)
+	def AccountAddressValid(self, account:Address, note:str):
 		pass
 
 	@external
@@ -160,16 +165,20 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._mint(self.msg.sender, value)
 		return True
 
-	# should be in Mintable.py later
+	# should be in IRC2Mintable.py later
 	@external
 	def mintTo(self, _account:Address, _value:int) -> bool:
 		self._mint(_account, _value)
 		return True
 
 	def _mint(self, account:Address, value:int) -> bool:
-		# if not account.is_contract:
+		# check if the address is valid
+		# if not is_icon_address_valid(address):
 		# 	raise InvalidAccountError("Invalid account address")
 		# 	pass
+
+		# if is_icon_address_valid(address):
+		# 	self.AccountAddressValid(address, "Address is valid")
 
 		if value <= 0:
 			raise LessThanOrZero("Invalid Value")
@@ -182,6 +191,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def _burn(self, account: Address, value: int) -> None:
+		# check if the address is valid
 		# if not account.is_contract:
 		# 	raise InvalidAccountError("Invalid account address")
 		# 	pass
@@ -201,17 +211,19 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def _allowance(self, owner: Address, spender: Address) -> int:
-		if not owner.is_contract or not spender.is_contract:
-			raise InvalidAccountError("Invalid account address")
-			pass
+		# check if the address is valid
+		# if not owner.is_contract or not spender.is_contract:
+		# 	raise InvalidAccountError("Invalid account address")
+		# 	pass
 
 		return self._allowances[owner][spender]
 
 	@external
 	def approve(self, spender: Address, amount: int) -> bool:
-		if not owner.is_contract or not spender.is_contract:
-			raise InvalidAccountError("Invalid account address")
-			pass
+		# check if the address is valid
+		# if not owner.is_contract or not spender.is_contract:
+		# 	raise InvalidAccountError("Invalid account address")
+		# 	pass
 
 		self._approve(self.msg.sender, spender, amount)
 		return true
@@ -221,10 +233,10 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def increaseAllowance(self, spender: Address, value: int) -> bool:
-		self._approve(self.msg.sender, spender,  self._allowances[msg.sender][spender] + value)
+		self._approve(self.msg.sender, spender,  Safemath.add(self._allowances[msg.sender][spender], value))
 		return True
 
 	@external
 	def decreaseAllowance(self, spender: Address, value: int) -> bool:
-		self._approve(self.msg.sender, spender, self._allowances[msg.sender][spender] - value)
+		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[msg.sender][spender], value))
 		return True
