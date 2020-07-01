@@ -7,13 +7,13 @@ from .tokens.IRC2pausable import IRC2Pausable
 
 TAG = 'SampleToken'
 
-class SampleToken(IRC2Mintable, IRC2Capped):
+class SampleToken(IRC2Pausable):
 
 	def __init__(self, db: IconScoreDatabase) -> None:
 		super().__init__(db)
 
-	def on_install(self, _tokenName: str, _symbolName: str, _initialSupply: int, _cap:int, _decimals: int = 18) -> None:
-		super().on_install(_tokenName, _symbolName, _initialSupply, _cap, _decimals)
+	def on_install(self, _tokenName: str, _symbolName: str, _initialSupply: int, _decimals: int = 18) -> None:
+		super().on_install(_tokenName, _symbolName, _initialSupply, _decimals)
 
-	def on_update(self, _tokenName: str, _symbolName: str, _initialSupply: int, _cap:int,  _decimals: int = 18,) -> None:
-		super().on_update(_tokenName, _symbolName, _initialSupply, _cap, _decimals)
+	def on_update(self, _tokenName: str, _symbolName: str, _initialSupply: int, _decimals: int = 18,) -> None:
+		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals)
