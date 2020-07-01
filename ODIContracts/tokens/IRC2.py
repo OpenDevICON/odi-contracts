@@ -158,26 +158,11 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
-	# should be in IRC2Mintable.py later 
-	@external
-	def mint(self, value:int) -> bool:
-		self._mint(self.msg.sender, value)
-		return True
-
-	# should be in IRC2Mintable.py later
-	@external
-	def mintTo(self, _account:Address, _value:int) -> bool:
-		self._mint(_account, _value)
-		return True
-
 	def _mint(self, account:Address, value:int) -> bool:
 		# check if the address is valid
 		# if not is_icon_address_valid(address):
 		# 	raise InvalidAccountError("Invalid account address")
 		# 	pass
-
-		# if is_icon_address_valid(address):
-		# 	self.AccountAddressValid(address, "Address is valid")
 
 		if value <= 0:
 			raise LessThanOrZero("Invalid Value")
@@ -225,7 +210,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		# 	pass
 
 		self._approve(self.msg.sender, spender, amount)
-		return true
+		return True
 
 	def _approve(self, owner:Address, spender:Address, value:int) -> None:
 		self._allowances[owner][spender] = value
