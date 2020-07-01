@@ -1,5 +1,6 @@
 from iconservice import *
 from .IRC2 import *
+from ..utils.checks import *
 
 class AlreadyPausedException(Exception):
 	pass
@@ -54,29 +55,34 @@ class IRC2Pausable(IRC2):
 
 	@external
 	@whenNotPaused
+	@only_owner
 	def pause(self):
 		self._paused.set(True)
 		self.Paused(self.msg.sender)
 
 	@external
 	@whenPaused
+	@only_owner
 	def unpause(self):
 		self._paused.set(False)
 		self.Unpaused(self.msg.sender)
 
 	@external
 	@whenNotPaused
+	@only_owner
 	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> None:
 		super().transfer(_to, _value, _data)
 
 	@external
 	@whenNotPaused
+	@only_owner
 	def burn(self, _amount: int) -> None:
 		# _burn is from IRC2
 		super()._burn(self.msg.sender, _amount)
 
 	@external
 	@whenNotPaused
+	@only_owner
 	def mint(self, value:int) -> bool:
 		self._mint(self.msg.sender, value)
 		return True
