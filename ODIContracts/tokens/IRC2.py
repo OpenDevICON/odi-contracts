@@ -1,7 +1,6 @@
 from iconservice import *
 from .IIRC2 import TokenStandard
 from ..math.SafeMath import SafeMath
-from ..utils.address import is_icon_address_valid
 
 TAG = 'IRC_2'
 
