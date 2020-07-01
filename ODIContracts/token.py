@@ -1,11 +1,11 @@
 from iconservice import *
 # from .tokens.IRC2burnable import IRC2Burnable
-# from .tokens.IRC2mintable import IRC2Mintable
-from .tokens.IRC2 import IRC2
+from .tokens.IRC2mintable import IRC2Mintable
+# from .tokens.IRC2 import IRC2
 
 TAG = 'SampleToken'
 
-class SampleToken(IRC2):
+class SampleToken(IRC2Mintable):
 
 	def __init__(self, db: IconScoreDatabase) -> None:
 		super().__init__(db)
