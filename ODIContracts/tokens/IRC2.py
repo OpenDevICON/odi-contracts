@@ -1,6 +1,7 @@
 from iconservice import *
 from .IIRC2 import TokenStandard
 from ..math.SafeMath import SafeMath
+from ..utils.checks import *
 
 TAG = 'IRC_2'
 
@@ -158,6 +159,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
+	@only_owner
 	def _mint(self, account:Address, value:int) -> bool:
 		# check if the address is valid
 		# if not is_icon_address_valid(address):
@@ -173,6 +175,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._total_supply.set(SafeMath.add(self._total_supply.get(), value))
 		self._balances[account] = SafeMath.add(self._balances[account], value)		
 
+	@only_owner
 	@external
 	def _burn(self, account: Address, value: int) -> None:
 		# check if the address is valid
@@ -202,6 +205,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		return self._allowances[owner][spender]
 
+	@only_owner
 	@external
 	def approve(self, spender: Address, amount: int) -> bool:
 		# check if the address is valid
@@ -215,11 +219,13 @@ class IRC2(TokenStandard, IconScoreBase):
 	def _approve(self, owner:Address, spender:Address, value:int) -> None:
 		self._allowances[owner][spender] = value
 
+	@only_owner
 	@external
 	def increaseAllowance(self, spender: Address, value: int) -> bool:
 		self._approve(self.msg.sender, spender,  Safemath.add(self._allowances[msg.sender][spender], value))
 		return True
 
+	@only_owner
 	@external
 	def decreaseAllowance(self, spender: Address, value: int) -> bool:
 		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[msg.sender][spender], value))
