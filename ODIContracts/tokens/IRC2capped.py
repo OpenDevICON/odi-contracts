@@ -14,26 +14,31 @@ class IRC2Capped(IRC2):
 	def __init__(self, db: IconScoreDatabase) -> None:
 		super().__init__(db)
 		self._cap = VarDB(self._CAP, db, value_type=int)
-		self._total_cap = VarDB(self._TOTAL_CAP, db, value_type=int)
 
-	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _cap: int) -> None:
+	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _cap:int, _decimals:int = 18) -> None:
 		if _cap < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
 
+		if _initialSupply >= _cap:
+			raise OverCapLimit("Over cap limit")
+			pass
+
 		total_cap = SafeMath.mul(_cap, 10 ** _decimals)
 		self._cap.set(total_cap)
-
 		super().on_install(_tokenName, _symbolName, _initialSupply, _decimals)
 
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _cap) -> None:
+	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _cap:int, _decimals:int = 18) -> None:
 		if _cap < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
 
+		if _initialSupply >= _cap:
+			raise OverCapLimit("Over cap limit")
+			pass
+
 		total_cap = SafeMath.mul(_cap, 10 ** _decimals)
 		self._cap.set(total_cap)
-
 		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals)
 
 	@external(readonly=True)
@@ -41,9 +46,11 @@ class IRC2Capped(IRC2):
 		return self._cap.get()
 
 	@external
-	def _beforeTokenTransfer(_from:Address, _to:Address, _value:int) -> None:
-		super()._beforeTokenTransfer(_from, _to, _value)
-
+	def _beforeTokenTransfer(self, _from:Address, _to:Address, _value:int) -> None:
 		if (self._total_supply.get() >= self._cap.get()) :
 			raise OverCapLimit("IRC2 cap exceeded!")
 			pass
+
+		super()._beforeTokenTransfer(_from, _to, _value)
+
+		
