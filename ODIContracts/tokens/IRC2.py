@@ -136,7 +136,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._transfer(self.msg.sender, _to, _value, _data)
 		return True
 
-	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes) -> None:
+	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes = None) -> None:
 		if _value <= 0 :
 			raise ZeroValueError("Transferring value cannot be less than 0.")
 			return
@@ -216,6 +216,12 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	def _approve(self, owner:Address, spender:Address, value:int) -> None:
 		self._allowances[owner][spender] = value
+
+	@external
+	def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
+		self._transfer(sender, recepient, amount)
+		self._approve(sender, recepient, SafeMath.sub(self._allowances[self.msg.sender][sender], amount))
+		return True
 
 	@external
 	def increaseAllowance(self, spender: Address, value: int) -> bool:
