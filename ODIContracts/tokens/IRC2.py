@@ -159,6 +159,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
+	# @external
 	def _mint(self, account:Address, value:int) -> bool:
 		# check if the address is valid
 		# if not is_icon_address_valid(address):
@@ -174,7 +175,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._total_supply.set(SafeMath.add(self._total_supply.get(), value))
 		self._balances[account] = SafeMath.add(self._balances[account], value)		
 
-	@external
+	# @external
 	def _burn(self, account: Address, value: int) -> None:
 		# check if the address is valid
 		# if not account.is_contract:
@@ -218,10 +219,10 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external
 	def increaseAllowance(self, spender: Address, value: int) -> bool:
-		self._approve(self.msg.sender, spender,  Safemath.add(self._allowances[msg.sender][spender], value))
+		self._approve(self.msg.sender, spender,  SafeMath.add(self._allowances[self.msg.sender][spender], value))
 		return True
 
 	@external
 	def decreaseAllowance(self, spender: Address, value: int) -> bool:
-		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[msg.sender][spender], value))
+		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
 		return True
