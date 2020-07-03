@@ -2,6 +2,7 @@ from iconservice import *
 from .IIRC2 import TokenStandard
 from ..math.SafeMath import SafeMath
 from ..utils.checks import *
+from ..utils.pausable import *
 
 TAG = 'IRC_2'
 
@@ -14,6 +15,7 @@ class ZeroValueError(Exception):
 class InvalidNameError(Exception):
 	pass
 
+
 # An interface of tokenFallback.
 # Receiving SCORE that has implemented this interface can handle
 # the receiving or further routine.
@@ -21,6 +23,7 @@ class TokenFallbackInterface(InterfaceScore):
 	@interface
 	def tokenFallback(self, _from: Address, _value: int, _data: bytes):
 		pass
+
 
 
 class IRC2(TokenStandard, IconScoreBase):
@@ -33,6 +36,7 @@ class IRC2(TokenStandard, IconScoreBase):
 	_TOTAL_SUPPLY = 'total_supply'
 	_BALANCES = 'balances'
 	_ALLOWANCES = 'allowances'
+	_PAUSED = 'paused'
 
 	def __init__(self, db: IconScoreDatabase) -> None:
 		super().__init__(db)
@@ -44,8 +48,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._total_supply = VarDB(self._TOTAL_SUPPLY, db, value_type=int)
 		self._balances = DictDB(self._BALANCES, db, value_type=int)
 		self._allowances = DictDB(self._ALLOWANCES,db,value_type=int,depth=2)
+		self._paused = VarDB(self._PAUSED, db, value_type=bool)
 
-	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
+	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _paused:bool = False) -> None:
 		super().on_install()
 
 		if (len(_symbolName) <= 0):
@@ -70,8 +75,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._total_supply.set(total_supply)
 		self._decimals.set(_decimals)
 		self._balances[self.msg.sender] = total_supply
+		self._paused.set(_paused)
 
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
+	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _paused:bool=False) -> None:
 		super().on_install()
 
 		if (len(_symbolName) <= 0):
@@ -96,6 +102,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._symbol.set(_symbolName)
 		self._total_supply.set(total_supply)
 		self._balances[self.msg.sender] = total_supply
+		self._paused.set(_paused)
 
 	@external(readonly=True)
 	def name(self) -> str:
@@ -103,6 +110,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		Returns the name of the token 
 		'''
 		return self._name.get()
+
+	def paused(self) -> bool:
+		return self._paused.get()
 
 	
 	@external(readonly=True)
@@ -220,6 +230,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._approve(sender, recepient, SafeMath.sub(self._allowances[self.msg.sender][sender], amount))
 		return True
 
+	@whenNotPaused
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes = None) -> None:
 		'''
 		Transfers certain amount of tokens from sender to the recepient.
@@ -261,6 +272,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
+	@whenNotPaused
 	@only_owner
 	def _mint(self, account:Address, amount:int) -> bool:
 		'''
@@ -285,6 +297,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._total_supply.set(SafeMath.add(self._total_supply.get(), amount))
 		self._balances[account] = SafeMath.add(self._balances[account], amount)		
 
+	@whenNotPaused
 	@only_owner
 	def _burn(self, account: Address, amount: int) -> None:
 		'''
