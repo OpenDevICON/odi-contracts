@@ -268,7 +268,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		This is an internal function
 
 		:param account: The account at whhich token is to be created.
-		:param amount: Number of tokens to be created at the account.
+		:param amount: Number of tokens to be created at the `account`.
 
 		Raises
 		ZeroValueError
@@ -290,8 +290,8 @@ class IRC2(TokenStandard, IconScoreBase):
 		Decreases the balance of that `account` and total supply.
 		This is an internal function
 
-		:param account: The `account` at which token is to be destroyed.
-		:param amount: The `amount` of tokens to be destroyed.
+		:param account: The account at which token is to be destroyed.
+		:param amount: The `amount` of tokens of `account` to be destroyed.
 
 		Raises
 		ZeroValueError
@@ -311,7 +311,8 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		Sets the allowance value given by the owner to the spender
 		This is an internal function
-
+			
+		See {IRC2-approve}
 		:returns The allowance amount provided by `owner` to the `spender`.
 		'''
 		self._allowances[owner][spender] = value
@@ -321,5 +322,14 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		Called before transfer of tokens.
 		This is an internal function.
+
+		If `_from` and `_to` are both non zero, `_value` number of tokens
+		of `_from` will be transferred to `_to`
+
+		If `_from` is zero `_value` tokens will be minted to `_to`.
+
+		If `_to` is zero `_value` tokens will be destroyed from `_from`.
+
+		Both `_from` and `_to` are never both zero at once.
 		'''
 		pass	

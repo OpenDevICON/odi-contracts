@@ -3,6 +3,9 @@ from .IRC2 import IRC2
 from ..math.SafeMath import SafeMath
 
 class IRC2Mintable(IRC2):
+	'''
+	Implementation of IRC2Mintable
+	'''
 
 	@external
 	def mint(self, _amount: int) -> None:
