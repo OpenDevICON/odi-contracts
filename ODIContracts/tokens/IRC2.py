@@ -71,7 +71,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		if _decimals < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
-		if _cap < 0:
+		if _cap <= 0:
 			raise ZeroValueError("Cap value cannot be less than zero")
 			pass
 		if _cap != DEFAULT_CAP_VALUE:
@@ -109,7 +109,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		if _decimals < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
-		if _cap < 0:
+		if _cap <= 0:
 			raise ZeroValueError("Cap value cannot be less than zero")
 			pass
 		if _cap != DEFAULT_CAP_VALUE:
