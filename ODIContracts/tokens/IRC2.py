@@ -2,7 +2,7 @@ from iconservice import *
 from .IIRC2 import TokenStandard
 from ..math.SafeMath import SafeMath
 from ..utils.checks import *
-from ..utils.consts import MAX_CAP_POSSIBLE
+from ..utils.consts import *
 
 TAG = 'IRC_2'
 
@@ -57,7 +57,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._paused = VarDB(self._PAUSED, db, value_type=bool)
 		self._cap = VarDB(self._CAP, db, value_type=int)
 
-	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _paused:bool = False, _cap:int=MAX_CAP_POSSIBLE) -> None:
+	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE, _paused:bool = False, _cap:int=DEFAULT_CAP_VALUE) -> None:
 
 		if (len(_symbolName) <= 0):
 			raise InvalidNameError("Invalid Symbol name")
@@ -74,7 +74,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		if _cap < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
-		if _cap != MAX_CAP_POSSIBLE:
+		if _cap != DEFAULT_CAP_VALUE:
 			if _initialSupply >= _cap:
 				raise OverCapLimit("Over cap limit")
 				pass
@@ -95,7 +95,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._paused.set(_paused)
 		self._cap.set(total_cap)
 
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18, _paused:bool=False, _cap:int=MAX_CAP_POSSIBLE) -> None:
+	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE, _paused:bool=False, _cap:int=DEFAULT_CAP_VALUE) -> None:
 
 		if (len(_symbolName) <= 0):
 			raise InvalidNameError("Invalid Symbol name")
@@ -112,7 +112,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		if _cap < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
-		if _cap != MAX_CAP_POSSIBLE:
+		if _cap != DEFAULT_CAP_VALUE:
 			if _initialSupply >= _cap:
 				raise OverCapLimit("Over cap limit")
 				pass
