@@ -75,6 +75,6 @@ class IRC2Pausable(IRC2):
 
 	@external
 	@whenNotPaused
-	def mint(self, value:int) -> bool:
-		super()._mint(self.msg.sender, value)
+	def mint(self, _amount:int) -> bool:
+		super()._mint(self.msg.sender, _amount)
 		return True
