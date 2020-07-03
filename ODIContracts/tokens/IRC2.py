@@ -164,6 +164,55 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._transfer(self.msg.sender, _to, _value, _data)
 		return True
 
+	@external
+	def _allowance(self, owner: Address, spender: Address) -> int:
+		'''
+		Returns the number of tokens that the spender will be allowed
+		to spend on behalf of owner.
+
+		:param owner: The account which provides the allowance.
+		:param spender: The account  which recieves the allowance from the owner.
+		'''
+		return self._allowances[owner][spender]
+
+	@external
+	def approve(self, spender: Address, amount: int) -> bool:
+		'''
+		Returns a boolean value to check if the operation was successful
+
+		:param spender: The account to which allowance is provided.
+		:param amount: The amount provided to the spender as allowance.
+		'''
+
+		self._approve(self.msg.sender, spender, amount)
+		return True
+
+	@external
+	def increaseAllowance(self, spender: Address, value: int) -> bool:
+		'''
+		Increases the allowance granted to `spender` by the caller
+		Returns a boolean value if the operation was successful
+		'''
+		self._approve(self.msg.sender, spender,  SafeMath.add(self._allowances[self.msg.sender][spender], value))
+		return True
+
+	@external
+	def decreaseAllowance(self, spender: Address, value: int) -> bool:
+		'''
+		Decreases the allowance granted to `spender` by the caller
+		Returns a boolean value if the operation was successful
+		'''
+		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
+		return True
+
+	@external
+	def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
+		'''
+		'''
+		self._transfer(sender, recepient, amount)
+		self._approve(sender, recepient, SafeMath.sub(self._allowances[self.msg.sender][sender], amount))
+		return True
+
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes = None) -> None:
 		'''
 		Transfers certain amount of tokens from sender to the recepient.
@@ -195,7 +244,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		if _to.is_contract:
 			# If the recipient is SCORE,
-			#   then calls `tokenFallback` to hand over control.
+			# then calls `tokenFallback` to hand over control.
 			recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
 			recipient_score.tokenFallback(_from, _value, _data)
 
@@ -214,7 +263,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		Raises
 		ZeroValueError
-			if the amount is less than or equal to zero
+			if the `amount` is less than or equal to zero
 		'''
 
 		if amount <= 0:
@@ -228,16 +277,16 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	def _burn(self, account: Address, amount: int) -> None:
 		'''
-		Destroys amount number of tokens from account
-		Decreases the balance of that account and total supply.
+		Destroys `amount` number of tokens from `account`
+		Decreases the balance of that `account` and total supply.
 		This is an internal function
 
-		:param account: The account at whhich token is to be destroyed.
-		:param amount: The amount of tokens to be destroyed.
+		:param account: The `account` at which token is to be destroyed.
+		:param amount: The `amount` of tokens to be destroyed.
 
 		Raises
 		ZeroValueError
-			if the amount is less than or equal to zero
+			if the `amount` is less than or equal to zero
 		'''
 
 		if amount <= 0:
@@ -249,36 +298,6 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._total_supply.set(SafeMath.sub(self._total_supply.get(), amount))
 		self._balances[account] = SafeMath.sub(self._balances[account], amount)
 
-	def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
-		'''
-		Called before transfer of tokens.
-		This is an internal function.
-		'''
-		pass
-
-	@external
-	def _allowance(self, owner: Address, spender: Address) -> int:
-		'''
-		Returns the number of tokens that the spender will be allowed
-		to spend on behalf of owner.
-
-		:param owner: The account which provides the allowance.
-		:param spender: The account  which recieves the allowance from the owner.
-		'''
-		return self._allowances[owner][spender]
-
-	@external
-	def approve(self, spender: Address, amount: int) -> bool:
-		'''
-		Returns a boolean value to check if the operation was successful
-
-		:param spender: The account to which allowance is provided.
-		:param amount: The amount provided to the spender as allowance.
-		'''
-
-		self._approve(self.msg.sender, spender, amount)
-		return True
-
 	def _approve(self, owner:Address, spender:Address, value:int) -> None:
 		'''
 		Sets the allowance value given by the owner to the spender
@@ -286,20 +305,10 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		self._allowances[owner][spender] = value
 
-	@external
-	def increaseAllowance(self, spender: Address, value: int) -> bool:
-		'''
-		Increases the allowance granted to `spender` by the caller
-		Returns a boolean value if the operation was successful
-		'''
-		self._approve(self.msg.sender, spender,  SafeMath.add(self._allowances[self.msg.sender][spender], value))
-		return True
 
-	@external
-	def decreaseAllowance(self, spender: Address, value: int) -> bool:
+	def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
 		'''
-		Decreases the allowance granted to `spender` by the caller
-		Returns a boolean value if the operation was successful
+		Called before transfer of tokens.
+		This is an internal function.
 		'''
-		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
-		return True
+		pass	
