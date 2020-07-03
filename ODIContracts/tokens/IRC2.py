@@ -261,6 +261,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
+	@only_owner
 	def _mint(self, account:Address, amount:int) -> bool:
 		'''
 		Creates amount number of tokens, and assigns to account
@@ -284,6 +285,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._total_supply.set(SafeMath.add(self._total_supply.get(), amount))
 		self._balances[account] = SafeMath.add(self._balances[account], amount)		
 
+	@only_owner
 	def _burn(self, account: Address, amount: int) -> None:
 		'''
 		Destroys `amount` number of tokens from `account`
