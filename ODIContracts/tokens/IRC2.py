@@ -74,9 +74,10 @@ class IRC2(TokenStandard, IconScoreBase):
 		if _cap < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
-		if _initialSupply >= _cap:
-			raise OverCapLimit("Over cap limit")
-			pass
+		if _cap != MAX_CAP_POSSIBLE:
+			if _initialSupply >= _cap:
+				raise OverCapLimit("Over cap limit")
+				pass
 
 		super().on_install()
 
@@ -111,9 +112,10 @@ class IRC2(TokenStandard, IconScoreBase):
 		if _cap < 0:
 			raise ZeroValueError("Decimals cannot be less than zero")
 			pass
-		if _initialSupply >= _cap:
-			raise OverCapLimit("Over cap limit")
-			pass
+		if _cap != MAX_CAP_POSSIBLE:
+			if _initialSupply >= _cap:
+				raise OverCapLimit("Over cap limit")
+				pass
 
 		super().on_install()
 
