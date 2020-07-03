@@ -3,6 +3,9 @@ from .IRC2 import IRC2
 from ..math.SafeMath import SafeMath
 
 class IRC2Burnable(IRC2):
+	'''
+	Implementation of IRC2Burnable
+	'''
 
 	@external
 	def burn(self, _amount: int) -> None:
