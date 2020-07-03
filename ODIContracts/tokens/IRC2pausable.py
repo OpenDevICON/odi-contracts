@@ -69,20 +69,13 @@ class IRC2Pausable(IRC2):
 
 	@external
 	@whenNotPaused
-	@only_owner
-	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> None:
-		super().transfer(_to, _value, _data)
-
-	@external
-	@whenNotPaused
-	@only_owner
-	def burn(self, _amount: int) -> None:
+	def burn(self, _amount: int) -> bool:
 		# _burn is from IRC2
 		super()._burn(self.msg.sender, _amount)
+		return True
 
 	@external
 	@whenNotPaused
-	@only_owner
 	def mint(self, value:int) -> bool:
-		self._mint(self.msg.sender, value)
+		super()._mint(self.msg.sender, value)
 		return True
