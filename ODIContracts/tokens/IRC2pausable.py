@@ -36,3 +36,8 @@ class IRC2Pausable(IRC2):
 	def unpause(self):
 		self._paused.set(False)
 		self.Unpaused(self.msg.sender)
+
+	@whenNotPaused
+	@external
+	def _beforeTokenTransfer(self, _from:Address, _to:Address, _value:int) -> None:
+		super()._beforeTokenTransfer(_from, _to, _value)
