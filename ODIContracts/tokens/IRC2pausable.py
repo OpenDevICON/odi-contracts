@@ -70,7 +70,6 @@ class IRC2Pausable(IRC2):
 	@external
 	@whenNotPaused
 	def burn(self, _amount: int) -> bool:
-		# _burn is from IRC2
 		super()._burn(self.msg.sender, _amount)
 		return True
 
