@@ -11,9 +11,6 @@ class InsufficientBalanceError(Exception):
 class ZeroValueError(Exception):
 	pass
 
-class InsufficientBalanceError(Exception):
-	pass
-
 class InvalidNameError(Exception):
 	pass
 
@@ -27,6 +24,9 @@ class TokenFallbackInterface(InterfaceScore):
 
 
 class IRC2(TokenStandard, IconScoreBase):
+	'''
+	Implementation of IRC2
+	'''
 	_NAME = 'name'
 	_SYMBOL = 'symbol'
 	_DECIMALS = 'decimals'
@@ -99,47 +99,91 @@ class IRC2(TokenStandard, IconScoreBase):
 
 	@external(readonly=True)
 	def name(self) -> str:
+		'''
+		Returns the name of the token 
+		'''
 		return self._name.get()
 
+	
 	@external(readonly=True)
 	def symbol(self) -> str:
+		'''
+		Returns the symbol of the token 
+		'''
 		return self._symbol.get()
 
 	@external(readonly=True)
 	def decimals(self) -> str:
+		'''
+		Returns the number of decimals
+		For example, if the decimals = 2, a balance of 25 tokens 
+		should be displayed to the user as (25 * 10 ** 2)
+
+		Tokens usually opt for value of 18. It is also the IRC2 
+		uses by default. It can be changed by passing required 
+		number of decimals during initialization. 
+		'''
 		return self._decimals.get()
 
 	@external(readonly=True)
 	def totalSupply(self) -> int:
+		'''
+		Returns the total number of tokens in existence
+		'''
 		return self._total_supply.get()
 
 	@external
 	def balanceOf(self,account: Address) -> int:
+		'''
+		Returns the amount of tokens owned by the account
+
+		:param account = ''
+		:return amount of tokens owned by the account with the given address
+
+		>>> balanceOf(account)
+		 '0x12ba23423ef243'
+		'''
 		return self._balances[account]
 
 	@eventlog(indexed=3)
 	def Transfer(self, _from: Address, _to:  Address, _value:  int, _data:  bytes): 
 		pass
 
-	@eventlog(indexed=1)
-	def Balance(self, _balance:int, note:str): 
-		pass
-
-	@eventlog(indexed=1)
-	def AccountAddressValid(self, account:Address, note:str):
-		pass
-
 	@external
 	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> bool:
+		'''
+		Transfers certain amount of tokens from sender to the reciever.
+		Returns a boolean value to check if the transfer was successful.
+		
+		:param _to: The account to which the token is to be transferred.
+		:param _value: The no. of tokens to be transferred.
+		:param _data: Any information or message 
+		'''
 		if _data is None:
 			_data = b'None'
 		self._transfer(self.msg.sender, _to, _value, _data)
 		return True
 
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes = None) -> None:
+		'''
+		Transfers certain amount of tokens from sender to the recepient.
+		This is an internal function.
+
+		:param _from: The account from which the token is to be transferred.
+		:param _to: The account to which the token is to be transferred.
+		:param _value: The no. of tokens to be transferred.
+		:param _data: Any information or message 
+		
+		Raises
+		ZeroValueError
+			if the value to be transferrd is less than 0
+		InsufficientBalanceError
+			if the sender has less balance than the value to be transferred
+		'''
 		if _value <= 0 :
 			raise ZeroValueError("Transferring value cannot be less than 0.")
 			return
+
 		if self._balances[_from] < _value :
 			raise InsufficientBalanceError("Insufficient balance.")
 			return
@@ -159,72 +203,103 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
-	def _mint(self, account:Address, value:int) -> bool:
-		# check if the address is valid
-		# if not is_icon_address_valid(address):
-		# 	raise InvalidAccountError("Invalid account address")
-		# 	pass
+	def _mint(self, account:Address, amount:int) -> bool:
+		'''
+		Creates amount number of tokens, and assigns to account
+		Increases the balance of that account and total supply.
+		This is an internal function
 
-		if value <= 0:
-			raise LessThanOrZero("Invalid Value")
+		:param account: The account at whhich token is to be created.
+		:param amount: Number of tokens to be created at the account.
+
+		Raises
+		ZeroValueError
+			if the amount is less than or equal to zero
+		'''
+
+		if amount <= 0:
+			raise ZeroValueError("Invalid Value")
 			pass
 
-		self._beforeTokenTransfer(0, account, value )
+		self._beforeTokenTransfer(0, account, amount )
 
-		self._total_supply.set(SafeMath.add(self._total_supply.get(), value))
-		self._balances[account] = SafeMath.add(self._balances[account], value)		
+		self._total_supply.set(SafeMath.add(self._total_supply.get(), amount))
+		self._balances[account] = SafeMath.add(self._balances[account], amount)		
 
-	def _burn(self, account: Address, value: int) -> None:
-		# check if the address is valid
-		# if not account.is_contract:
-		# 	raise InvalidAccountError("Invalid account address")
-		# 	pass
+	def _burn(self, account: Address, amount: int) -> None:
+		'''
+		Destroys amount number of tokens from account
+		Decreases the balance of that account and total supply.
+		This is an internal function
 
-		if value <= 0:
-			raise LessThanOrZero("Invalid Value")
+		:param account: The account at whhich token is to be destroyed.
+		:param amount: The amount of tokens to be destroyed.
+
+		Raises
+		ZeroValueError
+			if the amount is less than or equal to zero
+		'''
+
+		if amount <= 0:
+			raise ZeroValueError("Invalid Value")
 			pass
 
-		self._beforeTokenTransfer(account, 0, value)
+		self._beforeTokenTransfer(account, 0, amount)
 
-		self._total_supply.set(SafeMath.sub(self._total_supply.get(), value))
-		self._balances[account] = SafeMath.sub(self._balances[account], value)
+		self._total_supply.set(SafeMath.sub(self._total_supply.get(), amount))
+		self._balances[account] = SafeMath.sub(self._balances[account], amount)
 
 	def _beforeTokenTransfer(self, _from: Address, _to: Address,_value: int) -> None:
+		'''
+		Called before transfer of tokens.
+		This is an internal function.
+		'''
 		pass
 
+	@external
 	def _allowance(self, owner: Address, spender: Address) -> int:
-		# check if the address is valid
-		# if not owner.is_contract or not spender.is_contract:
-		# 	raise InvalidAccountError("Invalid account address")
-		# 	pass
+		'''
+		Returns the number of tokens that the spender will be allowed
+		to spend on behalf of owner.
 
+		:param owner: The account which provides the allowance.
+		:param spender: The account  which recieves the allowance from the owner.
+		'''
 		return self._allowances[owner][spender]
 
 	@external
 	def approve(self, spender: Address, amount: int) -> bool:
-		# check if the address is valid
-		# if not owner.is_contract or not spender.is_contract:
-		# 	raise InvalidAccountError("Invalid account address")
-		# 	pass
+		'''
+		Returns a boolean value to check if the operation was successful
+
+		:param spender: The account to which allowance is provided.
+		:param amount: The amount provided to the spender as allowance.
+		'''
 
 		self._approve(self.msg.sender, spender, amount)
 		return True
 
 	def _approve(self, owner:Address, spender:Address, value:int) -> None:
+		'''
+		Sets the allowance value given by the owner to the spender
+		This is an internal function
+		'''
 		self._allowances[owner][spender] = value
 
 	@external
-	def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
-		self._transfer(sender, recepient, amount)
-		self._approve(sender, recepient, SafeMath.sub(self._allowances[self.msg.sender][sender], amount))
-		return True
-
-	@external
 	def increaseAllowance(self, spender: Address, value: int) -> bool:
+		'''
+		Increases the allowance granted to `spender` by the caller
+		Returns a boolean value if the operation was successful
+		'''
 		self._approve(self.msg.sender, spender,  SafeMath.add(self._allowances[self.msg.sender][spender], value))
 		return True
 
 	@external
 	def decreaseAllowance(self, spender: Address, value: int) -> bool:
+		'''
+		Decreases the allowance granted to `spender` by the caller
+		Returns a boolean value if the operation was successful
+		'''
 		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
 		return True
