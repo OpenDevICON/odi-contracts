@@ -137,8 +137,8 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		Returns the amount of tokens owned by the account
 
-		:param account = ''
-		:return amount of tokens owned by the account with the given address
+		:param account: The account whose balance is to be checked.
+		:return Amount of tokens owned by the `account` with the given address.
 
 		>>> balanceOf(account)
 		 '0x12ba23423ef243'
@@ -167,11 +167,12 @@ class IRC2(TokenStandard, IconScoreBase):
 	@external
 	def _allowance(self, owner: Address, spender: Address) -> int:
 		'''
-		Returns the number of tokens that the spender will be allowed
-		to spend on behalf of owner.
+		Returns the number of tokens that the `spender` will be allowed
+		to spend on behalf of `owner`.
 
 		:param owner: The account which provides the allowance.
 		:param spender: The account  which recieves the allowance from the owner.
+		:return The allowance amount
 		'''
 		return self._allowances[owner][spender]
 
@@ -181,7 +182,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		Returns a boolean value to check if the operation was successful
 
 		:param spender: The account to which allowance is provided.
-		:param amount: The amount provided to the spender as allowance.
+		:param amount: The `amount` provided to the spender as allowance.
 		'''
 
 		self._approve(self.msg.sender, spender, amount)
@@ -192,6 +193,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		Increases the allowance granted to `spender` by the caller
 		Returns a boolean value if the operation was successful
+
+		:param spender: The account which gets the allowance.
+		:param value: The amount of allowance to be increased by.
 		'''
 		self._approve(self.msg.sender, spender,  SafeMath.add(self._allowances[self.msg.sender][spender], value))
 		return True
@@ -201,6 +205,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		Decreases the allowance granted to `spender` by the caller
 		Returns a boolean value if the operation was successful
+
+		:param spender: The account which gets the allowance.
+		:param value: The amount of allowance to be decreased by.
 		'''
 		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
 		return True
@@ -243,8 +250,10 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._balances[_to] = SafeMath.add(self._balances[_to], _value)
 
 		if _to.is_contract:
-			# If the recipient is SCORE,
-			# then calls `tokenFallback` to hand over control.
+			'''
+			If the recipient is SCORE,
+			then calls `tokenFallback` to hand over control.
+			'''
 			recipient_score = self.create_interface_score(_to, TokenFallbackInterface)
 			recipient_score.tokenFallback(_from, _value, _data)
 
@@ -302,6 +311,8 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		Sets the allowance value given by the owner to the spender
 		This is an internal function
+
+		:returns The allowance amount provided by `owner` to the `spender`.
 		'''
 		self._allowances[owner][spender] = value
 
