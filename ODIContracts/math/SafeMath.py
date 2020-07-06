@@ -131,8 +131,8 @@ class SafeMath:
 		DivisionByZero
 			If the divisor i.e. `b` is zero.
 
-		>>> mul(3,2)
-		6
+		>>> div(4,2)
+		2
 		'''
 		if (a < 0 or b < 0):
 			raise NegativeNumbers("Numbers cannot be negative")
