@@ -107,7 +107,7 @@ class IRC2Snapshot(IRC2):
 		self._burn(self.msg.sender, _value)
 
 	def _burn(self, _account: Address, _value: int) -> None:
-		super()._mint(_account, _value)
+		super()._burn(_account, _value)
 		self._updateAccountSnapshot(_account)
 		self._updateTotalSupplySnapshot()
 
