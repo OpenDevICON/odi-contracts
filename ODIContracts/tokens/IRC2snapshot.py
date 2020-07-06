@@ -1,24 +1,8 @@
 from iconservice import *
 from .IRC2 import IRC2
 from ..math.SafeMath import SafeMath
-
-def findUpperIndex(_snapshots: dict, _snapshot_id: int) -> int:
-    low = 0
-    high = _snapshots['length'][0]
-    
-    while (low<high):
-        mid = (low+high)//2
-        if _snapshots['ids'][mid] > _snapshot_id:
-            high = mid
-        else:
-            low = mid+1
-
-    if _snapshots['ids'][0] ==  _snapshot_id:
-        return 0
-    else:
-    	return low-1
+from ..utils.consts import *
 	
-
 class IRC2Snapshot(IRC2):
 
 
@@ -33,17 +17,16 @@ class IRC2Snapshot(IRC2):
 		self._current_snapshot_id = VarDB(self._CURRENT_SNAPSHOT_ID, db, value_type = int)
 
 
-	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
-		super().on_install(_tokenName, _symbolName, _initialSupply, _decimals)
+	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE, _paused: bool = False, _cap: DEFAULT_CAP_VALUE) -> None:
+		super().on_install(_tokenName, _symbolName, _initialSupply, _decimals,_paused,_cap)
 		self._current_snapshot_id.set(0)
-		
-
-
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
-		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals)
-		self._account_balance_snapshot[self.owner]['ids'][0] = 0
 		self._account_balance_snapshot[self.owner]['values'][0] = SafeMath.mul(_initialSupply, 10 ** _decimals)
 		self._account_balance_snapshot[self.owner]['length'][0] = 1
+		self._total_supply_snapshot['values'][0] = SafeMath.mul(_initialSupply, 10 ** _decimals)
+		self._total_supply_snapshot['length'][0] = 1
+		
+	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE,_paused: bool = False,_cap: DEFAULT_CAP_VALUE ) -> None:
+		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals,_paused,_cap)
 			
 	@eventlog(indexed=1)
 	def Snapshot(self, _id: int) -> None:
@@ -79,9 +62,6 @@ class IRC2Snapshot(IRC2):
 		else:
 			return self._account_balance_snapshot[_account]['values'][low-1]	
 
-	@external(readonly=True)
-	def get_owner(self)-> Address :
-		return self.owner
 
 	@external(readonly=True)
 	def totalSupplyAt(self, _snapshot_id: int) -> int:
@@ -120,20 +100,19 @@ class IRC2Snapshot(IRC2):
 		self._mint(self.msg.sender, _value)
 
 	def _mint(self, _account: Address, _value: int) -> None:
+		super()._mint(_account, _value)
 		self._updateAccountSnapshot(_account)
 		self._updateTotalSupplySnapshot()
 
-		super()._mint(_account, _value)
 
 	@external
 	def burn(self, _value: int) -> None:
 		self._burn(self.msg.sender, _value)
 
 	def _burn(self, _account: Address, _value: int) -> None:
+		super()._mint(_account, _value)
 		self._updateAccountSnapshot(_account)
 		self._updateTotalSupplySnapshot()
-
-		super()._mint(_account, _value)
 
 	
 	def _updateAccountSnapshot(self, _account: Address) -> None:
@@ -172,9 +151,3 @@ class IRC2Snapshot(IRC2):
 			self._total_supply_snapshot['length'][0] += 1
 		else:
 			self._total_supply_snapshot['values'][length-1] = current_value
-
-
-
-	@external(readonly=True)
-	def get_balance(self, _account: Address) -> int:
-		return self.balanceOf(_account)
