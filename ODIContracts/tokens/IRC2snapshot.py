@@ -133,8 +133,7 @@ class IRC2Snapshot(IRC2):
 	def _updateTotalSupplySnapshot(self) -> None:
 		current_id = self._current_snapshot_id.get()
 		current_value = self.totalSupply()
-		length = self._account_balance_snapshot['length'][0]
-		length = self._account_balance_snapshot[_account]['length'][0]
+		length = self._total_supply_snapshot['length'][0]
 		if length == 0:
 			self._total_supply_snapshot['values'][length] = current_value
 			self._total_supply_snapshot['length'][0] = SafeMath.add(self._total_supply_snapshot['length'][0], 1)
