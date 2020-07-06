@@ -3,9 +3,9 @@
 .teststatedb
 ODIcontracts/__pycache__
 ODIcontracts/token/__pycache__
-ODIcontracts/token/__pycache__/IIRC2.cpython-38.pyc
-__pycache__/repeater.cpython-38.pyc
+__pycache__
 token-test.ipynb
+
 config
 .ipynb_checkpoints
 repeater.py
