@@ -3,25 +3,32 @@ from .IRC2 import IRC2
 from ..math.SafeMath import SafeMath
 
 class IRC2Burnable(IRC2):
-
-	def __init__(self, db: IconScoreDatabase) -> None:
-		super().__init__(db)
-
-	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
-		super().on_install(_tokenName, _symbolName, _initialSupply, _decimals)
-
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = 18) -> None:
-		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals)
+	'''
+	Implementation of IRC2Burnable
+	'''
 
 	@external
 	def burn(self, _amount: int) -> None:
-		# _burn is from IRC2
+		'''
+		Destroys `_amount` number of tokens from the caller account.
+		Decreases the balance of that account and total supply.
+		See {IRC2-_burn}
+
+		:param _amount: Number of tokens to be destroyed.
+		'''
 		super()._burn(self.msg.sender, _amount)
 
 	@external
 	def burnFrom(self, _account: Address, _amount: int) -> None:
+		'''
+		Destroys `_amount` number of tokens from the caller account.
+		Decreases the balance of that account and total supply.
+		See {IRC2-_burn}
+
+		:param _account: The account at whhich token is to be destroyed.
+		:param _amount: Number of tokens to be destroyed at the `_account`.
+		'''
 		self._decreasedAllowance = allowance(_account, SafeMath.sub(self.msg.value, _amount))
 
-		 #these are from IRC2
 		super()._approve(_account, self.msg.sender, self._decreasedAllowance)
 		super()._burn(_account, _amount)
