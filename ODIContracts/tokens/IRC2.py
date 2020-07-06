@@ -45,6 +45,9 @@ class IRC2(TokenStandard, IconScoreBase):
 	_CAP = 'cap'
 
 	def __init__(self, db: IconScoreDatabase) -> None:
+		'''
+		Varible Definition
+		'''
 		super().__init__(db)
 
 		self._name = VarDB(self._NAME, db, value_type=str)
@@ -58,7 +61,30 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._cap = VarDB(self._CAP, db, value_type=int)
 
 	def on_install(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE, _paused:bool = False, _cap:int=DEFAULT_CAP_VALUE) -> None:
+	'''
+	Variable Initialization.
 
+	:param _tokenName: The name of the token.
+	:param _symbolName: The symbol of the token.
+	:param _initialSupply: The total number of tokens to initialize with. 
+												It is set to total supply in the beginning.
+	:param _decimals: The number of decimals. Set to 18 by default.
+	:param _paused: To check if it is paused.
+	:param _cap: The max number of tokens that can be created.
+
+	total_supply is set to `_initialSupply`* 10 ^ decimals.
+	_cap is set to `_cap` * 10 ^ decimals.
+
+	Raise 
+	InvalidNameError
+		If the length of strings `_symbolName` and `_tokenName` is 0 or less.
+	ZeroValueError
+		If `_initialSupply` is 0 or less.
+		If `_cap` value is 0 or less.
+		If `_decimals` value is 0 or less.
+	OverCapLimit
+		If `_initialSupply` is more than `_cap` value.
+	'''
 		if (len(_symbolName) <= 0):
 			raise InvalidNameError("Invalid Symbol name")
 			pass
@@ -96,7 +122,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._cap.set(total_cap)
 
 	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE, _paused:bool=False, _cap:int=DEFAULT_CAP_VALUE) -> None:
-
+	'''
+	See {IRC2-on_install}
+	'''
 		if (len(_symbolName) <= 0):
 			raise InvalidNameError("Invalid Symbol name")
 			pass
@@ -250,13 +278,13 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
 		return True
 
-	@external
-	def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
-		'''
-		'''
-		self._transfer(sender, recepient, amount)
-		self._approve(sender, recepient, SafeMath.sub(self._allowances[self.msg.sender][sender], amount))
-		return True
+	# @external
+	# def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
+	# 	'''
+	# 	'''
+	# 	self._transfer(sender, recepient, amount)
+	# 	self._approve(sender, recepient, SafeMath.sub(self._allowances[self.msg.sender][sender], amount))
+	# 	return True
 
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes = None) -> None:
 		'''
@@ -311,7 +339,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		Raises
 		ZeroValueError
-			if the `amount` is less than or equal to zero
+			if the `amount` is less than or equal to zero.
 		'''
 
 		if amount <= 0:
