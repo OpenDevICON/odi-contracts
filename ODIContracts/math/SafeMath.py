@@ -1,71 +1,82 @@
 class AdditionOverFlowError(Exception):
 	pass
 
-
 class SubtractionOverFlowError(Exception):
 	pass
-
 
 class MultiplicationOverFlowError(Exception):
 	pass
 
-
 class DivisionByZero(Exception):
 	pass
 
-
-class ModulobyZeroError(Exception):
+class ModuloByZeroError(Exception):
 	pass
-
 
 class NegativeNumbers(Exception):
 	pass
 
 
 class SafeMath:
-
-	def _require_positive(*args):
-		for arg in args:
-			if (arg < 0):
-				raise NegativeNumbers
-				break
+	'''
+	Wrapper over arithmetic operations in python with added overflow checks.
+	'''
 
 	def add(a: int, b: int) -> int:
-		"""	 
-		Returns the addition of two unsigned integers, reverting on
-		overflow.
+		'''
+		Returns the sum of two unsigned integers after overflow check.
 
-		Counterpart to default `+` operator.
+		Counterpart to default `+` operator in python.
+		
+		:param a: The first number. 
+		:param b: The second number.
+		:return Sum of `a` and `b`
 
-		Requirements:
-				- Addition cannot overflow.
-		"""
-		# _require_positive(a, b)
-		if (a<0 or b<0):
+		Raise
+		NegativeNumbers
+			If `a` or `b` is negative.
+		AdditionOverFlowError
+			In case of overflow.
+			It occurs for extremely large values.
+
+		>>> add(2,3)
+		5
+		'''
+		if (a < 0 or b < 0):
 			raise NegativeNumbers("Numbers cannot be negative")
 			return
-		c = a+b
-		if (c <= a):
-			raise AdditionOverFlowError("Addition overflow happened.")
+		c = a + b
+		if (c < a or c < b):
+			raise AdditionOverFlowError("Addition overflow occured.")
 			return
 		else:
 			return c
 
 	def sub(a: int, b: int) -> int:
 		'''
-		Returns the subtraction of two unsigned integers, reverting on
-		overflow (when the result is negative).
+		Returns the difference of two unsigned integers, reverting when the result is neagtive.
 
-		Counterpart to default `-` operator.
+		Counterpart to default `-` operator in python.
+		
+		:param a: The first number. 
+		:param b: The second number.
+		:return Difference of `a` and `b` if `a` > `b`
 
-		Requirements:
-				- Subtraction cannot overflow.
+		Raise
+		NegativeNumbers
+			If `a` or `b` is negative.
+		SubtractionOverFlowError
+			If `a`+`b` greater than `a`.
+
+		>>> sub(3,2)
+		1
+		>>> sub(3,4)
+		SubtractionOverFlowError: First argument must be greater than the second.
 		'''
-		# _require_positive(a, b)
-		if (a<0 or b<0):
-			raise NegativeNumbers("Numbers cannot be negative")
+		if (a < 0 or b < 0):
+			raise NegativeNumbers("Numbers cannot be negative.")
 			return
-		if b >= a:
+		if b > a:
 			raise SubtractionOverFlowError("First argument must be greater than the second.")
 			return
 		else:
@@ -73,57 +84,87 @@ class SafeMath:
 			return c
 
 	def mul(a: int, b: int) -> int:
-		"""	 
-		Returns the multiplication of two unsigned integers, reverting on
-		overflow.
+		'''
+		Returns the product of two unsigned integers, reverting in case of overflow.
 
-		Counterpart to default `*` operator.
+		Counterpart to default `*` operator in python.
+		
+		:param a: The first number, multiplicand. 
+		:param b: The second number, multiplier.
+		:return Product of `a` and `b` after checks.
 
-		Requirements:
-				- Multiplication cannot overflow.
-		"""
-		# _require_positive(a, b)
-		if (a<0 or b<0):
+		Raise
+		NegativeNumbers
+			If `a` or `b` is negative.
+		MultiplicationOverFlowError
+			In case of overflow.
+			It occurs for extremely large values.
+
+		>>> mul(3,2)
+		6
+		'''
+		if (a == 0):
+			return 0
+		if (a < 0 or b < 0):
 			raise NegativeNumbers("Numbers cannot be negative")
-		c = a*b
-		if (c//a != b):
+		c = a * b
+		if (c // a != b):
 			raise MultiplicationOverFlowError
 		else:
 			return c
 
 	def div(a: int, b: int) -> int:
-		"""	 
-		Returns the integer division of two unsigned integers, reverting on
-		division by number less than zero.
+		'''
+		Returns the integer division of two unsigned integers,
+		reverting if the divisor is zero.
+		The result is rounded towards zero.
 
-		Counterpart to default `/` operator.
+		Counterpart to default `/` operator in python.
+		
+		:param a: The dividend. 
+		:param b: The divisor.
+		:return Floor division (quotient) of `a` and `b` after checks.
 
-		Requirements:
-				- Divisor cannot be less than zero.
-		"""
-		# _require_positive(a, b)
-		if (a<0 or b<0):
+		Raise
+		NegativeNumbers
+			If `a` or `b` is negative.
+		DivisionByZero
+			If the divisor i.e. `b` is zero.
+
+		>>> mul(3,2)
+		6
+		'''
+		if (a < 0 or b < 0):
 			raise NegativeNumbers("Numbers cannot be negative")
-		if (b < 0):
-			raise DivisionByLessThanZeroError
-		c = a//b
+		if (b == 0):
+			raise DivisionByZero("The divisor can not be zero")
+		c = a // b
 		return c
 
 	def mod(a: int, b: int) -> int:
-		"""	 
-		Returns the remainder of two unsigned integers, reverting on
-		division by zero.
+		'''
+		Returns the remainder of two unsigned integers,
+		reverting if the divisor is zero.
 
-		Counterpart to default `%` operator.
+		Counterpart to default `%` operator in python.
+		
+		:param a: The first unsigned integer. 
+		:param b: The second unsigned integer.
+		:return Modulo of `a` and `b`.
 
-		Requirements:
-				- Divisor cannot overflow.
-		"""
-		# _require_positive(a, b)
-		if (a<0 or b<0):
+		Raise
+		NegativeNumbers
+			If `a` or `b` is negative.
+		ModuloByZeroError
+			If `b` is zero.
+
+		>>> mod(3,2)
+		1
+		'''
+		if (a < 0 or b < 0):
 			raise NegativeNumbers("Numbers cannot be negative")
 		if (b == 0):
-			raise ModulobyZeroError
+			raise ModuloByZeroError
 		else:
 			c = a % b
 			return c
