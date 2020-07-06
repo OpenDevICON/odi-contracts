@@ -5,7 +5,6 @@ from ..utils.consts import *
 	
 class IRC2Snapshot(IRC2):
 
-
 	_ACCOUNT_BALANCE_SNAPSHOT='account_balance_snapshot'
 	_TOTAL_SUPPLY_SNAPSHOT='total_supply_snapshot'
 	_CURRENT_SNAPSHOT_ID='current_snapshot_id'
@@ -37,7 +36,7 @@ class IRC2Snapshot(IRC2):
 		self._snapshot()
 
 	def _snapshot(self) -> None:
-		current_id = self._current_snapshot_id.get()+1
+		current_id = SafeMath.add(self._current_snapshot_id.get(), 1)
 		self._current_snapshot_id.set(current_id)
 		self.Snapshot(current_id)
 	
@@ -47,20 +46,20 @@ class IRC2Snapshot(IRC2):
 		if _snapshot_id < 0:
 			revert(f'IRC2Snapshot: snapshot id is equal to or greater then Zero')
 		low = 0
-		high =self._account_balance_snapshot[_account]['length'][0]
+		high = self._account_balance_snapshot[_account]['length'][0]
 		
 		while (low<high):
-			mid = (low+high)//2
+			mid = SafeMath.div(SafeMath.add(low, high), 2)
 			if self._account_balance_snapshot[_account]['ids'][mid] > _snapshot_id:
 				high = mid
 			else:
-				low = mid+1
+				low = SafeMath.add(mid,1)
 		if self._account_balance_snapshot[_account]['ids'][0] ==  _snapshot_id:
 			return self._account_balance_snapshot[_account]['values'][0]	
 		elif low == 0:
 			return 0
 		else:
-			return self._account_balance_snapshot[_account]['values'][low-1]	
+			return self._account_balance_snapshot[_account]['values'][SafeMath.sub(low, 1)]	
 
 
 	@external(readonly=True)
@@ -71,18 +70,18 @@ class IRC2Snapshot(IRC2):
 		high = self._total_supply_snapshot['length'][0]
 		
 		while (low<high):
-			mid = (low+high)//2
+			mid = SafeMath.div(SafeMath.add(low, high), 2)
 			if self._total_supply_snapshot['ids'][mid] > _snapshot_id:
 				high = mid
 			else:
-				low = mid+1
+				low = SafeMath.add(mid,1)
 
 		if self._total_supply_snapshot['ids'][0] ==  _snapshot_id:
 			return self._total_supply_snapshot['values'][0]
 		elif low == 0:
 			return 0
 		else:
-			return self._total_supply_snapshot['values'][low-1]	
+			return self._total_supply_snapshot['values'][SafeMath.sub(low, 1)]	
 
 	@external
 	def transfer(self,_to: Address, _value: int, _data: bytes = None) -> None:
@@ -91,9 +90,7 @@ class IRC2Snapshot(IRC2):
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data) -> None:
 		super()._transfer(_from,_to,_value,_data)
 		self._updateAccountSnapshot(_from)
-		self._updateAccountSnapshot(_to)
-
-		
+		self._updateAccountSnapshot(_to)		
 
 	@external
 	def mint(self, _value: int) -> None:
@@ -121,17 +118,17 @@ class IRC2Snapshot(IRC2):
 		length = self._account_balance_snapshot[_account]['length'][0]
 		if length == 0:
 			self._account_balance_snapshot[_account]['values'][length] = current_value
-			self._account_balance_snapshot[_account]['length'][0] += 1
+			self._account_balance_snapshot[_account]['length'][0] = SafeMath.add(self._account_balance_snapshot[_account]['length'][0], 1) 
 			return
 		else:
-			last_snapshot_id = self._account_balance_snapshot[_account]['ids'][length -1]
+			last_snapshot_id = self._account_balance_snapshot[_account]['ids'][SafeMath.sub(length, 1)]
 
 		if last_snapshot_id < current_id :
 			self._account_balance_snapshot[_account]['ids'][length] = current_id 
 			self._account_balance_snapshot[_account]['values'][length] = current_value
-			self._account_balance_snapshot[_account]['length'][0] += 1
+			self._account_balance_snapshot[_account]['length'][0] = SafeMath.add(self._account_balance_snapshot[_account]['length'][0], 1)
 		else:
-			self._account_balance_snapshot[_account]['values'][length-1] = current_value
+			self._account_balance_snapshot[_account]['values'][SafeMath.sub(length, 1)] = current_value
 
 	def _updateTotalSupplySnapshot(self) -> None:
 		current_id = self._current_snapshot_id.get()
@@ -140,14 +137,14 @@ class IRC2Snapshot(IRC2):
 		length = self._account_balance_snapshot[_account]['length'][0]
 		if length == 0:
 			self._total_supply_snapshot['values'][length] = current_value
-			self._total_supply_snapshot['length'][0] += 1
+			self._total_supply_snapshot['length'][0] = SafeMath.add(self._total_supply_snapshot['length'][0], 1)
 			return
 		else:
-			last_snapshot_id = self._total_supply_snapshot['ids'][length -1]
+			last_snapshot_id = self._total_supply_snapshot['ids'][SafeMath.sub(length, 1)]
 
 		if last_snapshot_id < current_id :
 			self._total_supply_snapshot['ids'][length] = current_id 
 			self._total_supply_snapshot['values'][length] = current_value
-			self._total_supply_snapshot['length'][0] += 1
+			self._total_supply_snapshot['length'][0] = SafeMath.add(self._total_supply_snapshot['length'][0], 1)
 		else:
-			self._total_supply_snapshot['values'][length-1] = current_value
+			self._total_supply_snapshot['values'][SafeMath.sub(length, 1)] = current_value
