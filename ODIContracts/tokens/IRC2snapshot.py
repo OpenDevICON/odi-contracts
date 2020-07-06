@@ -93,8 +93,8 @@ class IRC2Snapshot(IRC2):
 		self._updateAccountSnapshot(_to)		
 
 	@external
-	def mint(self, _value: int) -> None:
-		self._mint(self.msg.sender, _value)
+	def mint(self, _amount: int) -> None:
+		self._mint(self.msg.sender, _amount)
 
 	def _mint(self, _account: Address, _value: int) -> None:
 		super()._mint(_account, _value)
@@ -103,11 +103,11 @@ class IRC2Snapshot(IRC2):
 
 
 	@external
-	def burn(self, _value: int) -> None:
-		self._burn(self.msg.sender, _value)
+	def burn(self, _amount: int) -> None:
+		self._burn(self.msg.sender, _amount)
 
 	def _burn(self, _account: Address, _value: int) -> None:
-		super()._mint(_account, _value)
+		super()._burn(_account, _value)
 		self._updateAccountSnapshot(_account)
 		self._updateTotalSupplySnapshot()
 
