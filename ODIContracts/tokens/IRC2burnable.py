@@ -21,7 +21,7 @@ class IRC2Burnable(IRC2):
 	@external
 	def burnFrom(self, _account: Address, _amount: int) -> None:
 		'''
-		Destroys `_amount` number of tokens from the caller account.
+		Destroys `_amount` number of tokens from the specified `_account` account.
 		Decreases the balance of that account and total supply.
 		See {IRC2-_burn}
 
