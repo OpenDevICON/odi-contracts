@@ -12,11 +12,7 @@ class AlreadyUnpausedException(Exception):
 class IRC2Pausable(IRC2):
 
 	@eventlog(indexed=1)
-	def Paused(self, by:Address):
-		pass
-
-	@eventlog(indexed=1)
-	def Unpaused(self, by:Address):
+	def Paused(self, status:bool):
 		pass
 
 	@external(readonly=True)
@@ -28,14 +24,14 @@ class IRC2Pausable(IRC2):
 	@only_owner
 	def pause(self):
 		self._paused.set(True)
-		self.Paused(self.msg.sender)
+		self.Paused(True)
 
 	@external
 	@whenPaused
 	@only_owner
 	def unpause(self):
 		self._paused.set(False)
-		self.Unpaused(self.msg.sender)
+		self.Paused(False)
 
 	@whenNotPaused
 	@external
