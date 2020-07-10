@@ -230,7 +230,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._transfer(self.msg.sender, _to, _value, _data)
 		return True
 
-	@external
+	# @external
 	def _allowance(self, owner: Address, spender: Address) -> int:
 		'''
 		Returns the number of tokens that the `spender` will be allowed
@@ -346,10 +346,11 @@ class IRC2(TokenStandard, IconScoreBase):
 			raise ZeroValueError("Invalid Value")
 			pass
 
-		self._beforeTokenTransfer(0, account, amount )
+		self._beforeTokenTransfer(0, account, amount)
 
 		self._total_supply.set(SafeMath.add(self._total_supply.get(), amount))
 		self._balances[account] = SafeMath.add(self._balances[account], amount)		
+		
 
 	@only_owner
 	def _burn(self, account: Address, amount: int) -> None:

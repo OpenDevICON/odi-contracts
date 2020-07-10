@@ -40,7 +40,6 @@ def only_owner(func):
 		return func(self, *args, **kwargs)
 	return __wrapper
 
-
 def catch_error(func):
 	if not isfunction(func):
 		raise NotAFunctionError

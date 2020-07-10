@@ -21,15 +21,17 @@ class IRC2Capped(IRC2):
 		'''
 		return self._cap.get()
 
-	@external
+
+	# @external
 	def _beforeTokenTransfer(self, _from:Address, _to:Address, _value:int) -> None:
 		'''
 		Checks if the total supply exceeds `cap` limit
 		
 		See {IRC2-_beforeTokenTransfer}
 		'''
-		if (self._total_supply.get() >= self._cap.get()) :
+		if (SafeMath.add(self._total_supply.get(), _value) >= self._cap.get()) :
 			raise OverCapLimit("IRC2 cap exceeded!")
 			pass
 
 		super()._beforeTokenTransfer(_from, _to, _value)
+

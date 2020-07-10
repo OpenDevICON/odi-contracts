@@ -7,5 +7,5 @@ from .tokens.IRC2 import IRC2
 
 TAG = 'SampleToken'
 
-class SampleToken(IRC2Pausable, IRC2Mintable):
+class SampleToken(IRC2Capped, IRC2Mintable):
 	pass
