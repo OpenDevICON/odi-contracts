@@ -268,15 +268,15 @@ class IRC2(TokenStandard, IconScoreBase):
 	def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
 		'''
 		Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism.
-	  `amount` is then deducted from the caller's allowance.
+	  	`amount` is then deducted from the caller's allowance.
 
-	  :param sender: The address which gives allowance.
-	  :param recepient: The address to which the address with the allowance 	
-	  	is to transfer the `amount`.
-	  :param amount: The amount to be transferred from `sender` to `recepient`.
+	  	:param sender: The address which gives allowance.
+	  	:param recepient: The address to which the address with the allowance 	
+	  		is to transfer the `amount`.
+	  	:param amount: The amount to be transferred from `sender` to `recepient`.
 
-	  Raises
-	  InsufficientAllowanceError
+	  	Raises
+	  	InsufficientAllowanceError
 	  	If the amount to be transferred exceeds the allowance amount.
 		'''
 		if (self._allowances[sender][self.msg.sender] - amount < 0):
