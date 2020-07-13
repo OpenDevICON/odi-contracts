@@ -1,6 +1,5 @@
 from iconservice import *
 from .IRC2 import IRC2
-from ..math.SafeMath import SafeMath
 
 
 class ZeroValueError(Exception):
@@ -29,7 +28,7 @@ class IRC2Capped(IRC2):
 		
 		See {IRC2-_beforeTokenTransfer}
 		'''
-		if (SafeMath.add(self._total_supply.get(), _value) >= self._cap.get()) :
+		if ((self._total_supply.get() + _value) >= self._cap.get()) :
 			raise OverCapLimit("IRC2 cap exceeded!")
 			pass
 

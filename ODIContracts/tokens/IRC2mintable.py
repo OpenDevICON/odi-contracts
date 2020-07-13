@@ -1,6 +1,5 @@
 from iconservice import *
 from .IRC2 import IRC2
-from ..math.SafeMath import SafeMath
 
 class IRC2Mintable(IRC2):
 	'''

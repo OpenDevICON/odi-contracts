@@ -1,6 +1,5 @@
 from iconservice import *
 from .IRC2 import IRC2
-from ..math.SafeMath import SafeMath
 
 class IRC2Burnable(IRC2):
 	'''
@@ -29,7 +28,7 @@ class IRC2Burnable(IRC2):
 		:param _amount: Number of tokens to be destroyed at the `_account`.
 		'''
 
-		# decreasedAllowance = SafeMath.sub(self._allowance(_account, self.msg.sender), _amount)
+		# decreasedAllowance = self._allowance(_account, self.msg.sender) - _amount
 
 		# super()._approve(_account, self.msg.sender, decreasedAllowance)
 		super()._burn(_account, _amount)

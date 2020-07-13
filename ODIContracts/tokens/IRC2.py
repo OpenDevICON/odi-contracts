@@ -1,6 +1,5 @@
 from iconservice import *
 from .IIRC2 import TokenStandard
-from ..math.SafeMath import SafeMath
 from ..utils.checks import *
 from ..utils.consts import *
 
@@ -110,9 +109,9 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		super().on_install()
 
-		total_supply = SafeMath.mul(_initialSupply, 10 ** _decimals)
+		total_supply = _initialSupply * 10 ** _decimals
 
-		total_cap = SafeMath.mul(_cap, 10 ** _decimals)
+		total_cap = _cap * 10 ** _decimals
 
 		Logger.debug(f'on_install: total_supply={total_supply}', TAG)
 
@@ -150,8 +149,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		super().on_install()
 
-		total_supply = SafeMath.mul(_initialSupply, 10 ** _decimals)
-		total_cap = SafeMath.mul(_cap, 10 ** _decimals)
+		total_supply = _initialSupply * 10 ** _decimals
+		total_cap = _cap * 10 ** _decimals
 
 		Logger.debug(f'on_install: total_supply={total_supply}', TAG)
 
@@ -280,11 +279,11 @@ class IRC2(TokenStandard, IconScoreBase):
 	  InsufficientAllowanceError
 	  	If the amount to be transferred exceeds the allowance amount.
 		'''
-		if (SafeMath.sub(self._allowances[sender][self.msg.sender], amount) < 0):
+		if (self._allowances[sender][self.msg.sender] - amount < 0):
 			raise InsufficientAllowanceError("The amount exceeds the allowance")
 
 		self._transfer(sender, recepient, amount)
-		self._approve(sender, self.msg.sender, SafeMath.sub(self._allowances[sender][self.msg.sender], amount))
+		self._approve(sender, self.msg.sender, self._allowances[sender][self.msg.sender] - amount)
 		return True
 
 	@external
@@ -296,7 +295,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		:param spender: The account which gets the allowance.
 		:param value: The amount of allowance to be increased by.
 		'''
-		self._approve(self.msg.sender, spender,  SafeMath.add(self._allowances[self.msg.sender][spender], value))
+		self._approve(self.msg.sender, spender, self._allowances[self.msg.sender][spender]+ value)
 		return True
 
 	@external
@@ -308,7 +307,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		:param spender: The account which gets the allowance.
 		:param value: The amount of allowance to be decreased by.
 		'''
-		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
+		self._approve(self.msg.sender, spender, self._allowances[self.msg.sender][spender] - value)
 		return True
 
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes = None) -> None:
@@ -337,8 +336,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(_from, _to, _value)
 
-		self._balances[_from] = SafeMath.sub(self._balances[_from], _value)
-		self._balances[_to] = SafeMath.add(self._balances[_to], _value)
+		self._balances[_from] = self._balances[_from] - _value
+		self._balances[_to] = self._balances[_to] + _value
 
 		if _to.is_contract:
 			'''
@@ -373,8 +372,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(0, account, amount)
 
-		self._total_supply.set(SafeMath.add(self._total_supply.get(), amount))
-		self._balances[account] = SafeMath.add(self._balances[account], amount)		
+		self._total_supply.set(self._total_supply.get() + amount)
+		self._balances[account] = self._balances[account] + amount		
 
 		# Emits an event log Mint
 		self.Mint(account, amount)
@@ -401,8 +400,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(account, 0, amount)
 
-		self._total_supply.set(SafeMath.sub(self._total_supply.get(), amount))
-		self._balances[account] = SafeMath.sub(self._balances[account], amount)
+		self._total_supply.set(self._total_supply.get() - amount)
+		self._balances[account] = self._balances[account] - amount
 		
 		# Emits an event log Burn
 		self.Burn(account, amount)
