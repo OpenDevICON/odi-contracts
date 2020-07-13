@@ -21,6 +21,10 @@ class ZeroValueError(Exception):
 class OverCapLimit(Exception):
 	pass
 
+class InsufficientAllowanceError(Exception):
+	pass
+
+
 # An interface of tokenFallback.
 # Receiving SCORE that has implemented this interface can handle
 # the receiving or further routine.
@@ -28,7 +32,6 @@ class TokenFallbackInterface(InterfaceScore):
 	@interface
 	def tokenFallback(self, _from: Address, _value: int, _data: bytes):
 		pass
-
 
 
 class IRC2(TokenStandard, IconScoreBase):
@@ -215,6 +218,14 @@ class IRC2(TokenStandard, IconScoreBase):
 	def Transfer(self, _from: Address, _to:  Address, _value:  int, _data:  bytes): 
 		pass
 
+	@eventlog(indexed=1)
+	def Mint(self, account:Address, amount: int):
+		pass
+
+	@eventlog(indexed=1)
+	def _burn(self, account: Address, amount: int):
+		pass
+
 	@external
 	def transfer(self, _to: Address, _value: int, _data: bytes = None) -> bool:
 		'''
@@ -230,7 +241,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._transfer(self.msg.sender, _to, _value, _data)
 		return True
 
-	# @external
+	@external
 	def _allowance(self, owner: Address, spender: Address) -> int:
 		'''
 		Returns the number of tokens that the `spender` will be allowed
@@ -252,6 +263,28 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 
 		self._approve(self.msg.sender, spender, amount)
+		return True
+
+	@external
+	def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
+		'''
+		Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism.
+	  `amount` is then deducted from the caller's allowance.
+
+	  :param sender: The address which gives allowance.
+	  :param recepient: The address to which the address with the allowance 	
+	  	is to transfer the `amount`.
+	  :param amount: The amount to be transferred from `sender` to `recepient`.
+
+	  Raises
+	  InsufficientAllowanceError
+	  	If the amount to be transferred exceeds the allowance amount.
+		'''
+		if (SafeMath.sub(self._allowances[sender][self.msg.sender], amount) < 0):
+			raise InsufficientAllowanceError("The amount exceeds the allowance")
+
+		self._transfer(sender, recepient, amount)
+		self._approve(sender, self.msg.sender, SafeMath.sub(self._allowances[sender][self.msg.sender], amount))
 		return True
 
 	@external
@@ -277,14 +310,6 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		self._approve(self.msg.sender, spender, SafeMath.sub(self._allowances[self.msg.sender][spender], value))
 		return True
-
-	# @external
-	# def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
-	# 	'''
-	# 	'''
-	# 	self._transfer(sender, recepient, amount)
-	# 	self._approve(sender, recepient, SafeMath.sub(self._allowances[self.msg.sender][sender], amount))
-	# 	return True
 
 	def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes = None) -> None:
 		'''
@@ -350,6 +375,9 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._total_supply.set(SafeMath.add(self._total_supply.get(), amount))
 		self._balances[account] = SafeMath.add(self._balances[account], amount)		
+
+		# Emits an event log Mint
+		self.Mint(account, amount)
 		
 
 	@only_owner
@@ -375,6 +403,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._total_supply.set(SafeMath.sub(self._total_supply.get(), amount))
 		self._balances[account] = SafeMath.sub(self._balances[account], amount)
+		# Emits an event log Burn
+		self.Burn(account, amount)
 
 	def _approve(self, owner:Address, spender:Address, value:int) -> None:
 		'''

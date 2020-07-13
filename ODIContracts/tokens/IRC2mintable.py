@@ -30,5 +30,5 @@ class IRC2Mintable(IRC2):
 		'''
 		self._increasedAllowance = self._allowance(_account, SafeMath.add(self.msg.value, _amount))
 
-		super()._approve(_account, self.msg.sender, self._increasedAllowance)
+		# super()._approve(_account, self.msg.sender, self._increasedAllowance)
 		super()._mint(_account, _amount)
