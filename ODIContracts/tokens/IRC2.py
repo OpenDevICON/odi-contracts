@@ -223,7 +223,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		pass
 
 	@eventlog(indexed=1)
-	def _burn(self, account: Address, amount: int):
+	def Burn(self, account: Address, amount: int):
 		pass
 
 	@external
@@ -403,6 +403,7 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._total_supply.set(SafeMath.sub(self._total_supply.get(), amount))
 		self._balances[account] = SafeMath.sub(self._balances[account], amount)
+		
 		# Emits an event log Burn
 		self.Burn(account, amount)
 
