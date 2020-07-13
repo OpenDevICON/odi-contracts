@@ -28,7 +28,7 @@ class IRC2Burnable(IRC2):
 		:param _account: The account at whhich token is to be destroyed.
 		:param _amount: Number of tokens to be destroyed at the `_account`.
 		'''
-		self._decreasedAllowance = allowance(_account, SafeMath.sub(self.msg.value, _amount))
+		decreasedAllowance = allowance(_account, SafeMath.sub(self.msg.value, _amount))
 
-		super()._approve(_account, self.msg.sender, self._decreasedAllowance)
+		super()._approve(_account, self.msg.sender, decreasedAllowance)
 		super()._burn(_account, _amount)

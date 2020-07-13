@@ -25,10 +25,7 @@ class IRC2Mintable(IRC2):
 		Increases the balance of that account and total supply.
 		See {IRC2-_mint}
 
-		:param _account: The account at whhich token is to be created.
+		:param _account: The account at which token is to be created.
 		:param _amount: Number of tokens to be created at the account.
 		'''
-		self._increasedAllowance = self._allowance(_account, SafeMath.add(self.msg.value, _amount))
-
-		super()._approve(_account, self.msg.sender, self._increasedAllowance)
 		super()._mint(_account, _amount)
