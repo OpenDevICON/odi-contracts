@@ -25,7 +25,7 @@ class IRC2Burnable(IRC2):
 		Decreases the balance of that account and total supply.
 		See {IRC2-_burn}
 
-		:param _account: The account at whhich token is to be destroyed.
+		:param _account: The account at which token is to be destroyed.
 		:param _amount: Number of tokens to be destroyed at the `_account`.
 		'''
 		decreasedAllowance = allowance(_account, SafeMath.sub(self.msg.value, _amount))
