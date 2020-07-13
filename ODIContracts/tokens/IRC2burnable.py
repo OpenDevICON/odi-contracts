@@ -30,5 +30,5 @@ class IRC2Burnable(IRC2):
 		'''
 		self._decreasedAllowance = allowance(_account, SafeMath.sub(self.msg.value, _amount))
 
-		# super()._approve(_account, self.msg.sender, self._decreasedAllowance)
+		super()._approve(_account, self.msg.sender, self._decreasedAllowance)
 		super()._burn(_account, _amount)
