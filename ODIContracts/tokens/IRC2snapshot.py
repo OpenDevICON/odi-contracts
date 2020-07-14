@@ -117,7 +117,7 @@ class IRC2Snapshot(IRC2):
 		length = self._account_balance_snapshot[_account]['length'][0]
 		if length == 0:
 			self._account_balance_snapshot[_account]['values'][length] = current_value
-			self._account_balance_snapshot[_account]['length'][0] = self._account_balance_snapshot[_account]['length'][0] + 1 
+			self._account_balance_snapshot[_account]['length'][0] += 1 
 			return
 		else:
 			last_snapshot_id = self._account_balance_snapshot[_account]['ids'][length - 1]
@@ -125,7 +125,7 @@ class IRC2Snapshot(IRC2):
 		if last_snapshot_id < current_id :
 			self._account_balance_snapshot[_account]['ids'][length] = current_id 
 			self._account_balance_snapshot[_account]['values'][length] = current_value
-			self._account_balance_snapshot[_account]['length'][0] = self._account_balance_snapshot[_account]['length'][0] + 1
+			self._account_balance_snapshot[_account]['length'][0] +=  1
 		else:
 			self._account_balance_snapshot[_account]['values'][length - 1] = current_value
 
@@ -135,7 +135,7 @@ class IRC2Snapshot(IRC2):
 		length = self._total_supply_snapshot['length'][0]
 		if length == 0:
 			self._total_supply_snapshot['values'][length] = current_value
-			self._total_supply_snapshot['length'][0] = self._total_supply_snapshot['length'][0] + 1
+			self._total_supply_snapshot['length'][0] +=  1
 			return
 		else:
 			last_snapshot_id = self._total_supply_snapshot['ids'][length - 1]
@@ -143,6 +143,6 @@ class IRC2Snapshot(IRC2):
 		if last_snapshot_id < current_id :
 			self._total_supply_snapshot['ids'][length] = current_id 
 			self._total_supply_snapshot['values'][length] = current_value
-			self._total_supply_snapshot['length'][0] = self._total_supply_snapshot['length'][0] + 1
+			self._total_supply_snapshot['length'][0] +=  1
 		else:
 			self._total_supply_snapshot['values'][length - 1] = current_value

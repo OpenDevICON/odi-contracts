@@ -336,8 +336,8 @@ class IRC2(TokenStandard, IconScoreBase):
 
 		self._beforeTokenTransfer(_from, _to, _value)
 
-		self._balances[_from] = self._balances[_from] - _value
-		self._balances[_to] = self._balances[_to] + _value
+		self._balances[_from] -=  _value
+		self._balances[_to] += _value
 
 		if _to.is_contract:
 			'''
@@ -373,7 +373,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._beforeTokenTransfer(0, account, amount)
 
 		self._total_supply.set(self._total_supply.get() + amount)
-		self._balances[account] = self._balances[account] + amount		
+		self._balances[account] +=  amount		
 
 		# Emits an event log Mint
 		self.Mint(account, amount)
@@ -401,7 +401,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._beforeTokenTransfer(account, 0, amount)
 
 		self._total_supply.set(self._total_supply.get() - amount)
-		self._balances[account] = self._balances[account] - amount
+		self._balances[account] -= amount
 		
 		# Emits an event log Burn
 		self.Burn(account, amount)
