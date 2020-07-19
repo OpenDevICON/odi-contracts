@@ -123,44 +123,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		self._paused.set(_paused)
 		self._cap.set(total_cap)
 
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE, _paused:bool=False, _cap:int=DEFAULT_CAP_VALUE) -> None:
-		'''
-		See {IRC2-on_install}
-		'''
-		if (len(_symbolName) <= 0):
-			raise InvalidNameError("Invalid Symbol name")
-			pass
-		if (len(_tokenName) <= 0):
-			raise InvalidNameError("Invalid Token Name")
-			pass
-		if _initialSupply <= 0:
-			raise ZeroValueError("Initial Supply cannot be less than zero")
-			pass
-		if _decimals < 0:
-			raise ZeroValueError("Decimals cannot be less than zero")
-			pass
-		if _cap <= 0:
-			raise ZeroValueError("Cap value cannot be less than zero")
-			pass
-		if _cap != DEFAULT_CAP_VALUE:
-			if _initialSupply >= _cap:
-				raise OverCapLimit("Over cap limit")
-				pass
+	def on_update(self) -> None:
+		super().on_update()
 
-		super().on_install()
-
-		total_supply = _initialSupply * 10 ** _decimals
-		total_cap = _cap * 10 ** _decimals
-
-		Logger.debug(f'on_install: total_supply={total_supply}', TAG)
-
-		self._name.set(_tokenName)
-		self._decimals.set(_decimals)
-		self._symbol.set(_symbolName)
-		self._total_supply.set(total_supply)
-		self._balances[self.msg.sender] = total_supply
-		self._paused.set(_paused)
-		self._cap.set(total_cap)
 
 	@external(readonly=True)
 	def name(self) -> str:
