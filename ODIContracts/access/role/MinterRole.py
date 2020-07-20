@@ -13,12 +13,8 @@ class MinterRole(Roles):
         pass
 
     @external
-    def check(self) -> None:
-        super().hello()
-
-    @external
     def isMinter(self, _account: Address) -> bool:
-        super().has("minters" , _account)
+        super().has("minter" , _account)
 
     @only_owner
     def addMinter(self, _account: Address) -> bool:
@@ -35,9 +31,9 @@ class MinterRole(Roles):
         return True
 
     def _addMinter(self, _account: Address) -> None:
-        super().add("minters", _account)
+        super().add("minter", _account)
         self.MinterAdded(_account)
 
     def _removeMinter(self, _account: Address) -> None:
-        super().remove("minters", _account)
+        super().remove("minter", _account)
         self.MinterRemoved(_account)

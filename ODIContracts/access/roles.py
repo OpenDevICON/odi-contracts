@@ -1,6 +1,8 @@
 from iconservice import *
 from ..utils.checks import *
 
+roles = ["minter", "burner", "pauser"]
+
 class Roles(IconScoreBase):
     _ROLES = 'roles'
 
@@ -16,18 +18,17 @@ class Roles(IconScoreBase):
 
     @external
     def add(Role: str, _account: Address):
-        if self._roles[Role][_account]:
-            revert("Selected role is already assigned to the given account.")
-        self._roles[Role][_account] = True
+        if Role in roles:
+            if self._roles[Role][_account]:
+                revert("Selected role is already assigned to the given account.")
+            self._roles[Role][_account] = True
 
     @only_owner
     def remove(Role, _account: Address):
-        if self._roles[Role][_account]:
-            self._roles[Role][_account] = False
+        if Role in roles:
+            if self._roles[Role][_account]:
+                self._roles[Role][_account] = False
 
     def has(Role, _account: Address) -> bool:
-        return self._roles[Role][_account]
-
-    @external(readonly = True)
-    def hello(self) -> str:
-        return "Hello"
+        if Role in roles:
+            return self._roles[Role][_account]

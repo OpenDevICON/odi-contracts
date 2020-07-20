@@ -14,7 +14,7 @@ class PauserRole(Roles):
 
     @external
     def isPauser(self, _account: Address) -> bool:
-        super().has("_pausers" , _account)
+        super().has("_pauser" , _account)
 
     @only_owner
     def addPauser(self, _account: Address) -> bool:
@@ -31,9 +31,9 @@ class PauserRole(Roles):
         return True
 
     def _addPauser(self, _account: Address) -> None:
-        super().add("pausers", _account)
+        super().add("pauser", _account)
         self.PauserAdded(_account)
 
     def _removePauser(self, _account: Address) -> None:
-        super().remove("pausers", _account)
+        super().remove("pauser", _account)
         self.PauserRemoved(_account)
