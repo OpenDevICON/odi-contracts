@@ -2,6 +2,7 @@ from iconservice import *
 from ..utils.checks import *
 
 class Roles(IconScoreBase):
+
     _ROLES = 'roles'
 
     def __init__(self, db: IconScoreDatabase) -> None:
@@ -27,7 +28,3 @@ class Roles(IconScoreBase):
 
     def has(Role, _account: Address) -> bool:
         return self._roles[Role][_account]
-
-    @external(readonly = True)
-    def hello(self) -> str:
-        return "Hello"

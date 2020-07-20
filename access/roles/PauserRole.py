@@ -1,9 +1,20 @@
 from iconservice import *
 from ...utils.checks import *
-from ..roles.Roles import *
+from ..roles import Roles
 
 class PauserRole(IconScoreBase):
-    _pausers 
+    _PAUSERS = 'pausers'
+
+    def __init__(self, db: IconScoreDatabase) -> None:
+        super().__init__(db)
+        self._pausers = VarDB(self._ROLE, db, value_type=str)
+
+    def on_install(self) -> None:
+        super().on_install()
+        self._pausers.set("Pauser")
+
+    def on_update(self) -> None:
+        super().on_update()
 
     @eventlog(indexed=0)
     def PauserAdded(self, _account: Address): 
