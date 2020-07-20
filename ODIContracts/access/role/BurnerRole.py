@@ -1,5 +1,6 @@
 from iconservice import *
 from ...utils.checks import *
+from ...utils.consts import *
 from ..roles import Roles
 
 class BurnerRole(Roles):
@@ -14,7 +15,7 @@ class BurnerRole(Roles):
 
     @external
     def isBurner(self, _account: Address) -> bool:
-        super().has("burner", _account)
+        super().has(BURNER, _account)
 
     @only_owner
     def addBurner(self, _account: Address) -> bool:
@@ -31,9 +32,9 @@ class BurnerRole(Roles):
         return True
 
     def _addBurner(self, _account: Address) -> None:
-        super().add("burner", _account)
+        super().add(BURNER, _account)
         self.BurnerAdded(_account)
 
     def _removeBurner(self, _account: Address) -> None:
-        super().remove("burner", _account)
+        super().remove(BURNER, _account)
         self.BurnerRemoved(_account)

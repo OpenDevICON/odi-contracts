@@ -1,5 +1,6 @@
 from iconservice import *
 from ...utils.checks import *
+from ...utils.consts import *
 from ..roles import Roles
 
 class MinterRole(Roles):
@@ -31,9 +32,9 @@ class MinterRole(Roles):
         return True
 
     def _addMinter(self, _account: Address) -> None:
-        super().add("minter", _account)
+        super().add(MINTER, _account)
         self.MinterAdded(_account)
 
     def _removeMinter(self, _account: Address) -> None:
-        super().remove("minter", _account)
+        super().remove(MINTER, _account)
         self.MinterRemoved(_account)

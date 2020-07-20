@@ -1,7 +1,8 @@
 from iconservice import *
 from ..utils.checks import *
+from ...utils.consts import *
 
-roles = ["minter", "burner", "pauser"]
+roles = [MINTER, BURNER, PAUSER]
 
 class Roles(IconScoreBase):
     _ROLES = 'roles'
@@ -49,7 +50,6 @@ class Roles(IconScoreBase):
             if Role = roles[2]:
                 if _account in self._pausers_list: 
                     self._pausers_list.remove(_account)
-
 
     def has(Role: str, _account: Address) -> bool:
         if Role in roles:
