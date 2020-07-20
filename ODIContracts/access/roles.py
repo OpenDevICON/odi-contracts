@@ -1,21 +1,22 @@
 from iconservice import *
 
-
 class Roles(IconScoreBase):
 
-    _ROLES = 'roles'
+    _ROLE = 'role'
 
     def __init__(self, db: IconScoreDatabase) -> None:
-        self._roles = DictDB(self._ROLES, db, value_type=bool, depth=2)
+        self._role = DictDB(self._ROLE, db, value_type=bool, depth=2)
 
-    def add(Role: str, _account: Address):
-        if self._roles[Role][_account]:
+    def add(self, role, _account: Address):
+        if self._role[role][_account]:
             revert("Selected role is already assigned to the given account.")
-        self._roles[Role][_account] = True
+        self._role[role][_account] = True
 
-    def remove(Role, _account: Address):
-        if self._roles[Role][_account]:
-            self._roles[Role][_account] = False
+    def remove(self, role, _account: Address):
+        if self._role[role][_account]:
+            self._role[role][_account] = False
+        else:
+            revert("This account doesn't have the selected role to remove.")
 
-    def has(Role, _account: Address) -> bool:
-        return self._roles[Role][_account]
+    def has(self, role, _account: Address) -> bool:
+        return self._role[role][_account]
