@@ -14,7 +14,7 @@ class BurnerRole(Roles):
 
     @external
     def isBurner(self, _account: Address) -> bool:
-        super().has("burner" , _account)
+        super().has("burner", _account)
 
     @only_owner
     def addBurner(self, _account: Address) -> bool:
