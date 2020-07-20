@@ -1,6 +1,6 @@
 from iconservice import *
 from ...utils.checks import *
-from ..roles import Roles
+from ..roles.Roles import *
 
 class MinterRole(IconScoreBase):
     _minters 
@@ -17,12 +17,12 @@ class MinterRole(IconScoreBase):
     def isMinter(self, _account: Address) -> bool:
         return Roles.has(_minters , _account)
 
-    @only_admin
+    @only_owner
     def addMinter(self, _account: Address) -> bool:
         self._addMinter(_account)
         return True
 
-    @only_admin
+    @only_owner
     def removeMinter(self, _account: Address) -> bool:
         self._removeMinter(_account)
         return True
