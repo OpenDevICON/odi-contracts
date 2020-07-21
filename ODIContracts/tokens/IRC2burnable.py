@@ -1,7 +1,8 @@
 from iconservice import *
 from .IRC2 import IRC2
+from ..access.role.roles import Roles
 
-class IRC2Burnable(IRC2):
+class IRC2Burnable(IRC2, Roles):
 	'''
 	Implementation of IRC2Burnable
 	'''

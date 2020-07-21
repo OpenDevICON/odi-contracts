@@ -14,9 +14,6 @@ class ZeroValueError(Exception):
 class InvalidNameError(Exception):
 	pass
 
-class ZeroValueError(Exception):
-	pass
-
 class OverCapLimit(Exception):
 	pass
 
@@ -321,9 +318,9 @@ class IRC2(TokenStandard, IconScoreBase):
 		'''
 		Creates amount number of tokens, and assigns to account
 		Increases the balance of that account and total supply.
-		This is an internal function
+		This is an internal function.
 
-		:param account: The account at whhich token is to be created.
+		:param account: The account at which token is to be created.
 		:param amount: Number of tokens to be created at the `account`.
 
 		Raises
@@ -343,12 +340,12 @@ class IRC2(TokenStandard, IconScoreBase):
 		# Emits an event log Mint
 		self.Mint(account, amount)
 		
-	@only_owner
+	@only_burner
 	def _burn(self, account: Address, amount: int) -> None:
 		'''
 		Destroys `amount` number of tokens from `account`
 		Decreases the balance of that `account` and total supply.
-		This is an internal function
+		This is an internal function.
 
 		:param account: The account at which token is to be destroyed.
 		:param amount: The `amount` of tokens of `account` to be destroyed.
@@ -373,7 +370,7 @@ class IRC2(TokenStandard, IconScoreBase):
 	def _approve(self, owner:Address, spender:Address, value:int) -> None:
 		'''
 		Sets the allowance value given by the owner to the spender
-		This is an internal function
+		This is an internal function.
 			
 		See {IRC2-approve}
 		:returns The allowance amount provided by `owner` to the `spender`.
