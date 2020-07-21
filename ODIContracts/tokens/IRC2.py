@@ -316,7 +316,7 @@ class IRC2(TokenStandard, IconScoreBase):
 		self.Transfer(_from, _to, _value, _data)
 		Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
-	@only_owner
+	@only_minter
 	def _mint(self, account:Address, amount:int) -> bool:
 		'''
 		Creates amount number of tokens, and assigns to account
@@ -343,7 +343,6 @@ class IRC2(TokenStandard, IconScoreBase):
 		# Emits an event log Mint
 		self.Mint(account, amount)
 		
-
 	@only_owner
 	def _burn(self, account: Address, amount: int) -> None:
 		'''

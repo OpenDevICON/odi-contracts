@@ -21,14 +21,14 @@ class IRC2Pausable(IRC2):
 
 	@external
 	@whenNotPaused
-	@only_owner
+	@only_pauser
 	def pause(self):
 		self._paused.set(True)
 		self.Paused(True)
 
 	@external
 	@whenPaused
-	@only_owner
+	@only_pauser
 	def unpause(self):
 		self._paused.set(False)
 		self.Paused(False)
