@@ -1,4 +1,5 @@
 from iconservice import *
+from ..access.roles import Roles
 
 # ================================================
 #  Exceptions
@@ -42,24 +43,18 @@ def only_owner(func):
 	return __wrapper
 
 
-
-
-'''
-To do -> Change these 3 decorators
-only_minter ko lagi the address whould be in minters_list from roles.py.
-same with only_burner and only_pauser.
-
 def only_minter(func):
 	if not isfunction(func):
 		raise NotAFunctionError
 
 	@wraps(func)
 	def __wrapper(self: object, *args, **kwargs):
-		if self.msg.sender != self.minter:
-			raise SenderNotMinterError(self.minter)
+		if self.msg.sender not in Roles._minters_list:
+			raise SenderNotMinterError(self.msg.sender)
 
 		return func(self, *args, **kwargs)
 	return __wrapper
+
 
 def only_burner(func):
 	if not isfunction(func):
@@ -67,11 +62,12 @@ def only_burner(func):
 
 	@wraps(func)
 	def __wrapper(self: object, *args, **kwargs):
-		if self.msg.sender != self.burner:
-			raise SenderNotMinterError(self.burner)
+		if self.msg.sender not in Roles._burners_list:
+			raise SenderNotMinterError(self.msg.sender)
 
 		return func(self, *args, **kwargs)
 	return __wrapper
+
 
 def only_pauser(func):
 	if not isfunction(func):
@@ -79,12 +75,11 @@ def only_pauser(func):
 
 	@wraps(func)
 	def __wrapper(self: object, *args, **kwargs):
-		if self.msg.sender != self.pauser:
-			raise SenderNotMinterError(self.pauser)
+		if self.msg.sender not in Roles._pausers_list:
+			raise SenderNotMinterError(self.msg.sender)
 
 		return func(self, *args, **kwargs)
 	return __wrapper
-'''
 
 
 def catch_error(func):

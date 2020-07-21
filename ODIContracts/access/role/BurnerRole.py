@@ -15,18 +15,26 @@ class BurnerRole(Roles):
 
     @external
     def isBurner(self, _account: Address) -> bool:
-        super().has(BURNER, _account)
+        return super().has(BURNER, _account)
+
+    @external
+    def burnersList(self) -> None:
+        return super().burnersList()
 
     @only_owner
+    @external
     def addBurner(self, _account: Address) -> bool:
         self._addBurner(_account)
         return True
 
     @only_owner
+    @external
     def removeBurner(self, _account: Address) -> bool:
         self._removeBurner(_account)
         return True
 
+    @external
+    # @only_burner
     def renounceBurner(self) -> bool:
         self._removeBurner(self.msg.sender)
         return True

@@ -1,5 +1,6 @@
 from iconservice import *
 from ...utils.checks import *
+from ...utils.consts import *
 from ..roles import Roles
 
 class PauserRole(Roles):
@@ -14,18 +15,26 @@ class PauserRole(Roles):
 
     @external
     def isPauser(self, _account: Address) -> bool:
-        super().has(PAUSER , _account)
+        return super().has(PAUSER , _account)
+
+    @external
+    def pausersList(self) -> None:
+        return super()._pausersList()
 
     @only_owner
+    @external
     def addPauser(self, _account: Address) -> bool:
         self._addPauser(_account)
         return True
 
     @only_owner
+    @external
     def removePauser(self, _account: Address) -> bool:
         self._removePauser(_account)
         return True
 
+    @external
+    # @only_pauser
     def renouncePauser(self) -> bool:
         self._removePauser(self.msg.sender)
         return True
