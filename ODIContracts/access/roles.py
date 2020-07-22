@@ -25,10 +25,6 @@ class Roles(IconScoreBase):
     def on_update(self) -> None:
         super().on_update()
 
-    @eventlog(indexed=1)
-    def EventTest(self, message:str, index: int):
-        pass
-
     def add(self, Role: str, _account: Address):
         if Role in roles:
             if self._roles[Role][_account]:
@@ -43,6 +39,9 @@ class Roles(IconScoreBase):
 
     def remove(self, Role: str, _account: Address):
         if Role in roles:
+            if _account == self.owner:
+                revert("Owner cannot be removed from the roles.")
+
             if self._roles[Role][_account]:
                 self._roles[Role][_account] = False
             else:
