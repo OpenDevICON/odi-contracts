@@ -18,8 +18,8 @@ class BurnerRole(Roles):
         return super().has(BURNER, _account)
 
     @external
-    def burnersList(self) -> None:
-        return super().burnersList()
+    def burnersList(self):
+        return super()._burnersList()
 
     @only_owner
     @external

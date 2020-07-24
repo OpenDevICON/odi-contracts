@@ -18,7 +18,7 @@ class MinterRole(Roles):
         return super().has(MINTER , _account)
 
     @external
-    def mintersList(self) -> None:
+    def mintersList(self):
         return super()._mintersList()
 
     @only_owner

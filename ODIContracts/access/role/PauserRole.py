@@ -18,7 +18,7 @@ class PauserRole(Roles):
         return super().has(PAUSER , _account)
 
     @external
-    def pausersList(self) -> None:
+    def pausersList(self):
         return super()._pausersList()
 
     @only_owner
