@@ -52,21 +52,21 @@ class Roles(IconScoreBase):
                     top = self._minters_list.pop()
                     if top != _account:
                         for i in range(len(self._minters_list)):
-                            if self._minters_list[i] == i:
+                            if self._minters_list[i] == _account:
                                 self._minters_list[i] = top
             if Role == roles[1]:
                 if _account in self._burners_list: 
                     top = self._burners_list.pop()
                     if top != _account:
                         for i in range(len(self._burners_list)):
-                            if self._burners_list[i] == i:
+                            if self._burners_list[i] == _account:
                                 self._burners_list[i] = top
             if Role == roles[2]:
                 if _account in self._pausers_list: 
                     top = self._pausers_list.pop()
                     if top != _account:
                         for i in range(len(self._pausers_list)):
-                            if self._pausers_list[i] == i:
+                            if self._pausers_list[i] == _account:
                                 self._pausers_list[i] = top
 
     def has(self, Role: str, _account: Address) -> bool:
