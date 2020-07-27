@@ -15,6 +15,11 @@ class NotAFunctionError(Exception):
 class SenderNotMinterError(Exception):
 	pass
 
+class SenderNotBurnerError(Exception):
+	pass
+
+class SenderNotPauserError(Exception):
+	pass
 
 def only_wallet(func):
 	if not isfunction(func):
@@ -62,7 +67,7 @@ def only_burner(func):
 	@wraps(func)
 	def __wrapper(self: object, *args, **kwargs):
 		if self.msg.sender not in self._burners_list:
-			raise SenderNotMinterError(self.msg.sender)
+			raise SenderNotBurnerError(self.msg.sender)
 
 		return func(self, *args, **kwargs)
 	return __wrapper
@@ -75,7 +80,7 @@ def only_pauser(func):
 	@wraps(func)
 	def __wrapper(self: object, *args, **kwargs):
 		if self.msg.sender not in self._pausers_list:
-			raise SenderNotMinterError(self.msg.sender)
+			raise SenderNotPauserError(self.msg.sender)
 
 		return func(self, *args, **kwargs)
 	return __wrapper
