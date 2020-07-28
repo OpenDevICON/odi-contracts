@@ -1,0 +1,6 @@
+DEFAULT_CAP_VALUE = 2 ** 256 - 1
+DEFAULT_DECIMAL_VALUE = 18
+
+MINTER = 'minter'
+BURNER = 'burner'
+PAUSER = 'pauser'
