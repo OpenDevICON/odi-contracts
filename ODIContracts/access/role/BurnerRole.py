@@ -13,11 +13,11 @@ class BurnerRole(Roles):
     def BurnerRemoved(self, _account: Address): 
         pass
 
-    @external
+    @external(readonly=True)
     def isBurner(self, _account: Address) -> bool:
         return super().has(BURNER, _account)
 
-    @external
+    @external(readonly=True)
     def burnersList(self):
         return super()._burnersList()
 

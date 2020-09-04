@@ -13,11 +13,11 @@ class PauserRole(Roles):
     def PauserRemoved(self, _account: Address): 
         pass
 
-    @external
+    @external(readonly=True)
     def isPauser(self, _account: Address) -> bool:
         return super().has(PAUSER , _account)
 
-    @external
+    @external(readonly=True)
     def pausersList(self):
         return super()._pausersList()
 
