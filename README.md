@@ -16,7 +16,6 @@ This has been extended to implement the following.
 -   [IRC2Snapshot](https://docs.opendevicon.io/v/development/score-library/irc2standard/irc2snapshot): To add snapshot mechanism.
 
 > Visit [OpenDevICON]("https://docs.opendevicon.io/v/development/") for more info.
-<<<<<<< HEAD
 
 ## IRC3
 OpenDevICON Token Contracts implement IRC3 standard token which is equivalent to [ERC721](https://eips.ethereum.org/EIPS/eip-721) for [ICON](https://icon.foundation/?lang=en) blockchain. It helps to keep track of [non-fungible] tokens.
