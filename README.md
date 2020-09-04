@@ -1,5 +1,6 @@
 # ODI Token Contracts
 
+## IRC2
 OpenDevICON Token Contracts implement IRC2 standard token which is equivalent to [ERC20](https://eips.ethereum.org/EIPS/eip-20) for [ICON](https://icon.foundation/?lang=en) blockchain. It helps to keep track of [fungible](https://en.wikipedia.org/wiki/Fungibility) tokens.
 
 There are a few core contracts to implement IRC2 token.
