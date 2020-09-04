@@ -28,8 +28,8 @@ There are a few core contracts to implement IRC2 token.
 
 This has been extended to implement the following.
 
--   [IRC3Mintable]: To create token supply.
--   [IRC3Burnable]: To destroy the tokens.
+-   [IRC3Mintable]: To create non-funglible token.
+-   [IRC3Burnable]: To destroy the non-fungible token.
 -   [IRC3Pausable] To pause token operation for all users.
--   [IRC3Updatable]: To add snapshot mechanism.
+-   [IRC3Updatable]: To update the created non-fungible tokens.
 
