@@ -1,7 +1,7 @@
 from iconservice import *
 from .IIRC2 import TokenStandard
-from ..utils.checks import *
-from ..utils.consts import *
+from ...utils.checks import *
+from ...utils.consts import *
 
 TAG = 'IRC2'
 

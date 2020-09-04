@@ -1,8 +1,8 @@
 from iconservice import *
 from .IRC2 import *
-from ..utils.checks import *
-from ..utils.pausable import *
-from ..access.roles import Roles
+from ...utils.checks import *
+from ...utils.pausable import *
+from ...access.roles import Roles
 
 class AlreadyPausedException(Exception):
 	pass
