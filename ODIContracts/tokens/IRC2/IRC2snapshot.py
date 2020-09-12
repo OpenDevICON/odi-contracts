@@ -1,6 +1,6 @@
 from iconservice import *
 from .IRC2 import IRC2
-from ..utils.consts import *
+from ...utils.consts import *
 	
 class IRC2Snapshot(IRC2):
 

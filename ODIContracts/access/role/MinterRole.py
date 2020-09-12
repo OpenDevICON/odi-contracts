@@ -13,11 +13,11 @@ class MinterRole(Roles):
     def MinterRemoved(self, _account: Address): 
         pass
 
-    @external
+    @external(readonly=True)
     def isMinter(self, _account: Address) -> bool:
         return super().has(MINTER , _account)
 
-    @external
+    @external(readonly=True)
     def mintersList(self):
         return super()._mintersList()
 

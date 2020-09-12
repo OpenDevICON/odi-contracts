@@ -1,5 +1,6 @@
 # ODI Token Contracts
 
+## IRC2
 OpenDevICON Token Contracts implement IRC2 standard token which is equivalent to [ERC20](https://eips.ethereum.org/EIPS/eip-20) for [ICON](https://icon.foundation/?lang=en) blockchain. It helps to keep track of [fungible](https://en.wikipedia.org/wiki/Fungibility) tokens.
 
 There are a few core contracts to implement IRC2 token.
@@ -16,3 +17,18 @@ This has been extended to implement the following.
 -   [IRC2Snapshot](https://docs.opendevicon.io/v/development/score-library/irc2standard/irc2snapshot): To add snapshot mechanism.
 
 > Visit [OpenDevICON]("https://docs.opendevicon.io/v/development/") for more info.
+
+## IRC3
+OpenDevICON Token Contracts implement IRC3 standard token which is equivalent to [ERC721](https://eips.ethereum.org/EIPS/eip-721) for [ICON](https://icon.foundation/?lang=en) blockchain. It helps to keep track of [non-fungible] tokens.
+
+There are a few core contracts to implement IRC3 token.
+
+-   [IIRC3](https://github.com/icon-project/IIPs/blob/master/IIPS/iip-3.md): Interface IRC3 methods should confirm into.
+-   IRC3: The base implementation of IRC3 contract.
+
+This has been extended to implement the following.
+
+-   IRC3Mintable: To create non-funglible token.
+-   IRC3Burnable: To destroy the non-fungible token.
+-   IRC3Pausable To pause token operation for all users.
+-   IRC3Updatable: To update the created non-fungible tokens.

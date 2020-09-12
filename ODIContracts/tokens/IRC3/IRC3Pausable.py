@@ -1,16 +1,10 @@
 from iconservice import *
-from .IRC2 import *
-from ..utils.checks import *
-from ..utils.pausable import *
-from ..access.roles import Roles
+from .IRC3 import IRC3
+from ...access.roles import Roles
+from ...utils.checks import *
+from ...utils.pausable import *
 
-class AlreadyPausedException(Exception):
-	pass
-
-class AlreadyUnpausedException(Exception):
-	pass
-
-class IRC2Pausable(IRC2, Roles):
+class IRC3Pausable(IRC3):
 
 	@eventlog(indexed=1)
 	def Paused(self, status:bool):
@@ -35,6 +29,5 @@ class IRC2Pausable(IRC2, Roles):
 		self.Paused(False)
 
 	@whenNotPaused
-	@external
-	def _beforeTokenTransfer(self, _from:Address, _to:Address, _value:int) -> None:
-		super()._beforeTokenTransfer(_from, _to, _value)
+	def _beforeTokenOperation(self, _from:Address, _to:Address, _tokenId:int):
+		super()._beforeTokenOperation(_from, _to, _tokenId)
