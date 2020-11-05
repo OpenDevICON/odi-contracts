@@ -23,8 +23,8 @@ class IRC2Snapshot(IRC2):
 		self._total_supply_snapshot['values'][0] = _initialSupply * 10 ** _decimals
 		self._total_supply_snapshot['length'][0] = 1
 		
-	def on_update(self, _tokenName:str, _symbolName:str, _initialSupply:int, _decimals:int = DEFAULT_DECIMAL_VALUE,_paused: bool = False,_cap: int = DEFAULT_CAP_VALUE ) -> None:
-		super().on_update(_tokenName, _symbolName, _initialSupply, _decimals,_paused,_cap)
+	def on_update(self) -> None:
+		super().on_update()
 			
 	@eventlog(indexed=1)
 	def Snapshot(self, _id: int) -> None:
