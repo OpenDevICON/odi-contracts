@@ -78,9 +78,9 @@ class IRC2(IconScoreBase, TokenStandard):
         InvalidNameError
             If the length of strings `_symbolName` and `_tokenName` is 0 or less.
         ZeroValueError
-            If `_initialSupply` is 0 or less.
+            If `_initialSupply` is less than 0.
             If `_cap` value is 0 or less.
-            If `_decimals` value is 0 or less.
+            If `_decimals` value is less than 0.
         OverCapLimit
             If `_initialSupply` is more than `_cap` value.
         '''
@@ -88,23 +88,17 @@ class IRC2(IconScoreBase, TokenStandard):
 
         if (len(_symbol) <= 0):
             raise InvalidNameError("Invalid Symbol name")
-            pass
         if (len(_name) <= 0):
             raise InvalidNameError("Invalid Token Name")
-            pass
         if _initialSupply < 0:
             raise ZeroValueError("Initial Supply cannot be less than zero")
-            pass
         if _decimals < 0:
             raise ZeroValueError("Decimals cannot be less than zero")
-            pass
         if _cap <= 0:
             raise ZeroValueError("Cap value cannot be less than zero")
-            pass
         if _cap != DEFAULT_CAP_VALUE:
             if _initialSupply >= _cap:
                 raise OverCapLimit("Over cap limit")
-                pass    
 
         total_supply = _initialSupply * 10 ** _decimals
         total_cap = _cap * 10 ** _decimals
@@ -213,7 +207,7 @@ class IRC2(IconScoreBase, TokenStandard):
         return self._allowances[owner][spender]
 
     @external
-    def approve(self, spender: Address, amount: int) -> bool:
+    def approve(self, spender: Address, amount: int) -> None:
         '''
         Returns a boolean value to check if the operation was successful
 
@@ -222,10 +216,9 @@ class IRC2(IconScoreBase, TokenStandard):
         '''
 
         self._approve(self.msg.sender, spender, amount)
-        return True
 
     @external
-    def transferFrom(self, sender:Address, recepient:Address, amount:int) -> bool:
+    def transferFrom(self, sender:Address, recepient:Address, amount:int) -> None:
         '''
         Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism.
         `amount` is then deducted from the caller's allowance.
@@ -244,10 +237,9 @@ class IRC2(IconScoreBase, TokenStandard):
 
         self._transfer(sender, recepient, amount)
         self._approve(sender, self.msg.sender, self._allowances[sender][self.msg.sender] - amount)
-        return True
 
     @external
-    def increaseAllowance(self, spender: Address, value: int) -> bool:
+    def increaseAllowance(self, spender: Address, value: int) -> None:
         '''
         Increases the allowance granted to `spender` by the caller
         Returns a boolean value if the operation was successful
@@ -256,10 +248,9 @@ class IRC2(IconScoreBase, TokenStandard):
         :param value: The amount of allowance to be increased by.
         '''
         self._approve(self.msg.sender, spender, self._allowances[self.msg.sender][spender]+ value)
-        return True
 
     @external
-    def decreaseAllowance(self, spender: Address, value: int) -> bool:
+    def decreaseAllowance(self, spender: Address, value: int) -> None:
         '''
         Decreases the allowance granted to `spender` by the caller
         Returns a boolean value if the operation was successful
@@ -268,7 +259,6 @@ class IRC2(IconScoreBase, TokenStandard):
         :param value: The amount of allowance to be decreased by.
         '''
         self._approve(self.msg.sender, spender, self._allowances[self.msg.sender][spender] - value)
-        return True
 
     def _transfer(self, _from: Address, _to: Address, _value: int, _data: bytes):
         '''
@@ -288,11 +278,9 @@ class IRC2(IconScoreBase, TokenStandard):
         '''
         if _value < 0 :
             raise ZeroValueError("Transferring value cannot be less than 0.")
-            return
 
         if self._balances[_from] < _value :
             raise InsufficientBalanceError("Insufficient balance.")
-            return
 
         self._beforeTokenTransfer(_from, _to, _value)
 
@@ -312,7 +300,7 @@ class IRC2(IconScoreBase, TokenStandard):
         Logger.debug(f'Transfer({_from}, {_to}, {_value}, {_data})', TAG)
 
     @only_minter
-    def _mint(self, account:Address, amount:int) -> bool:
+    def _mint(self, account: Address, amount: int) -> None:
         '''
         Creates amount number of tokens, and assigns to account
         Increases the balance of that account and total supply.
@@ -328,7 +316,6 @@ class IRC2(IconScoreBase, TokenStandard):
 
         if amount <= 0:
             raise ZeroValueError("Invalid Value")
-            pass
 
         self._beforeTokenTransfer(0, account, amount)
 
@@ -355,7 +342,6 @@ class IRC2(IconScoreBase, TokenStandard):
 
         if amount <= 0:
             raise ZeroValueError("Invalid Value")
-            pass
 
         self._beforeTokenTransfer(account, 0, amount)
 

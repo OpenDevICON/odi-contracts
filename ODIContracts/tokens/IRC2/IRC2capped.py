@@ -30,7 +30,6 @@ class IRC2Capped(IRC2):
 		'''
 		if ((self._total_supply.get() + _value) >= self._cap.get()) :
 			raise OverCapLimit("IRC2 cap exceeded!")
-			pass
 
 		super()._beforeTokenTransfer(_from, _to, _value)
 
