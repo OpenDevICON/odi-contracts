@@ -92,7 +92,7 @@ class IRC2(IconScoreBase, TokenStandard):
         if (len(_name) <= 0):
             raise InvalidNameError("Invalid Token Name")
             pass
-        if _initialSupply <= 0:
+        if _initialSupply < 0:
             raise ZeroValueError("Initial Supply cannot be less than zero")
             pass
         if _decimals < 0:
