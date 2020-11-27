@@ -200,7 +200,7 @@ class IRC2(IconScoreBase, TokenStandard):
             _data = b'None'
         self._transfer(self.msg.sender, _to, _value, _data)    
 
-    @external
+    @external(readonly=True)
     def _allowance(self, owner: Address, spender: Address) -> int:
         '''
         Returns the number of tokens that the `spender` will be allowed
