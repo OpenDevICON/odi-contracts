@@ -290,6 +290,9 @@ class IRC2(IconScoreBase, TokenStandard):
             raise ZeroValueError("Transferring value cannot be less than 0.")
             return
 
+        if _data == b'mint':
+            _from = self.address
+
         if self._balances[_from] < _value :
             raise InsufficientBalanceError("Insufficient balance.")
             return
@@ -330,10 +333,12 @@ class IRC2(IconScoreBase, TokenStandard):
             raise ZeroValueError("Invalid Value")
             pass
 
-        self._beforeTokenTransfer(0, account, amount)
+        # self._beforeTokenTransfer(0, account, amount)
 
         self._total_supply.set(self._total_supply.get() + amount)
-        self._balances[account] +=  amount      
+        self._balances[self.address] +=  amount
+        self._transfer(self.address, account, amount, b'mint')
+
 
         # Emits an event log Mint
         self.Mint(account, amount)
