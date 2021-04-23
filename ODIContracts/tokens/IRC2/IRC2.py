@@ -317,10 +317,11 @@ class IRC2(IconScoreBase, TokenStandard):
         if amount <= 0:
             raise ZeroValueError("Invalid Value")
 
-        self._beforeTokenTransfer(0, account, amount)
+        # self._beforeTokenTransfer(0, account, amount)
 
         self._total_supply.set(self._total_supply.get() + amount)
-        self._balances[account] +=  amount      
+        self._balances[self.address] +=  amount
+        self._transfer(self.address, account, amount, b'mint')      
 
         # Emits an event log Mint
         self.Mint(account, amount)
